@@ -178,7 +178,7 @@ export default function PricingPage() {
                   href="/contact"
                   eventName="cta_click"
                   eventMeta={{ location: "pricing_plan_card", target: `/contact_${tier.tier}` }}
-                  className="inline-flex px-4 py-2 border border-white/30 text-white/75 text-[10px] font-mono uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+                  className="inline-flex px-4 py-2 border border-white/30 text-white/75 text-[10px] font-mono uppercase tracking-widest cta-glow"
                 >
                   Discuss {tier.tier} plan
                 </TrackedLink>
@@ -264,7 +264,7 @@ export default function PricingPage() {
             href="/contact"
             eventName="cta_click"
             eventMeta={{ location: "pricing_final_cta", target: "/contact" }}
-            className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest cta-glow"
           >
             Book a strategy call
           </TrackedLink>

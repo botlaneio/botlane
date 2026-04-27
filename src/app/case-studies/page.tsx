@@ -80,7 +80,7 @@ export default function CaseStudiesPage() {
             href="/book-call"
             eventName="cta_click"
             eventMeta={{ location: "case_studies_final_cta", target: "/book-call" }}
-            className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest cta-glow"
           >
             Book a call
           </TrackedLink>

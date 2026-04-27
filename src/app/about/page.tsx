@@ -60,7 +60,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/how-it-works"
-            className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest cta-glow"
           >
             View how it works
           </Link>

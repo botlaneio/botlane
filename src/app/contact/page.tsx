@@ -53,7 +53,7 @@ export default function ContactPage() {
               href="/book-call"
               eventName="cta_click"
               eventMeta={{ location: "contact_hero", target: "/book-call" }}
-              className="px-8 py-4 border border-white/50 font-mono text-sm tracking-widest uppercase hover:bg-white hover:text-black transition-colors"
+              className="px-8 py-4 border border-white/50 font-mono text-sm tracking-widest uppercase cta-glow"
             >
               Start Onboarding
             </TrackedLink>
@@ -130,7 +130,7 @@ export default function ContactPage() {
             </ul>
             <Link
               href="/pricing"
-              className="inline-flex px-5 py-2 border border-white/35 text-white/75 text-[10px] font-mono uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+              className="inline-flex px-5 py-2 border border-white/35 text-white/75 text-[10px] font-mono uppercase tracking-widest cta-glow"
             >
               Review plans before call
             </Link>

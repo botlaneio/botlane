@@ -221,7 +221,7 @@ export default function MetricsPage() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest cta-glow"
           >
             Book a strategy call
           </Link>

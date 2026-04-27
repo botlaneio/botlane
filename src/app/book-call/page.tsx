@@ -117,7 +117,7 @@ export default function BookCallPage() {
             href="/pricing"
             eventName="cta_click"
             eventMeta={{ location: "book_call_direct_contacts", target: "/pricing" }}
-            className="inline-flex mt-4 px-4 py-2 border border-white/30 text-white/75 text-[10px] font-mono uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            className="inline-flex mt-4 px-4 py-2 border border-white/30 text-white/75 text-[10px] font-mono uppercase tracking-widest cta-glow"
           >
             Review plans before booking
           </TrackedLink>

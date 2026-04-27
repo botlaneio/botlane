@@ -220,7 +220,7 @@ export function LeadCaptureForm({ sourcePage }: LeadCaptureFormProps) {
       <button
         type="submit"
         disabled={isSubmitting || (Boolean(turnstileSiteKey) && !turnstileToken)}
-        className="w-full md:w-auto px-7 py-3 border border-white/45 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+        className="w-full md:w-auto px-7 py-3 border border-white/45 text-white font-mono text-xs uppercase tracking-widest cta-glow disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {isSubmitting ? "Submitting..." : "Request strategy call"}
       </button>

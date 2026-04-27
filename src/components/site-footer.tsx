@@ -50,7 +50,7 @@ export function SiteFooter() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex px-4 py-2 border border-white/40 text-white/70 text-[10px] font-mono uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            className="inline-flex px-4 py-2 border border-white/40 text-white/70 text-[10px] font-mono uppercase tracking-widest cta-glow"
           >
             Book Strategy Call
           </Link>

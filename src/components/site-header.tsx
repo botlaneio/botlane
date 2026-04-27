@@ -64,7 +64,7 @@ export function SiteHeader() {
           href="/book-call"
           eventName="cta_click"
           eventMeta={{ location: "header_desktop", target: "/book-call" }}
-          className="hidden md:inline-flex px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs hover:bg-white hover:text-black transition-colors"
+          className="hidden md:inline-flex px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs cta-glow"
         >
           Initialize
         </TrackedLink>
@@ -106,7 +106,7 @@ export function SiteHeader() {
             eventName="cta_click"
             eventMeta={{ location: "header_mobile", target: "/book-call" }}
             onClick={closeMobileMenu}
-            className="mt-4 w-full px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs hover:bg-white hover:text-black transition-colors"
+            className="mt-4 w-full px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs cta-glow"
           >
             Initialize
           </TrackedLink>

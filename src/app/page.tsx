@@ -82,13 +82,34 @@ export default function Home() {
   const [pipelineStep, setPipelineStep] = useState(0);
   const cursorX = useMotionValue(-400);
   const cursorY = useMotionValue(-400);
-  const springX = useSpring(cursorX, { stiffness: 80, damping: 20 });
-  const springY = useSpring(cursorY, { stiffness: 80, damping: 20 });
+  const springX = useSpring(cursorX, { stiffness: 240, damping: 30, mass: 0.25 });
+  const springY = useSpring(cursorY, { stiffness: 240, damping: 30, mass: 0.25 });
 
   useEffect(() => {
-    const handle = (e: MouseEvent) => { cursorX.set(e.clientX); cursorY.set(e.clientY); };
-    window.addEventListener("mousemove", handle);
-    return () => window.removeEventListener("mousemove", handle);
+    let rafId = 0;
+    const latest = { x: -400, y: -400 };
+
+    const flush = () => {
+      cursorX.set(latest.x);
+      cursorY.set(latest.y);
+      rafId = 0;
+    };
+
+    const handle = (e: MouseEvent) => {
+      latest.x = e.clientX;
+      latest.y = e.clientY;
+      if (!rafId) {
+        rafId = window.requestAnimationFrame(flush);
+      }
+    };
+
+    window.addEventListener("mousemove", handle, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handle);
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
   }, [cursorX, cursorY]);
 
   useEffect(() => {
@@ -134,12 +155,12 @@ export default function Home() {
 
       {/* Cursor Flashlight */}
       <motion.div
-        className="pointer-events-none fixed z-50 rounded-full"
+        className="pointer-events-none fixed z-50 rounded-full will-change-transform"
         style={{
-          width: 500, height: 500,
+          width: 360, height: 360,
           x: springX, y: springY,
           translateX: "-50%", translateY: "-50%",
-          background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(255,255,255,0.035) 0%, transparent 68%)",
         }}
       />
 
@@ -222,7 +243,7 @@ export default function Home() {
                 href="/book-call"
                 eventName="cta_click"
                 eventMeta={{ location: "home_hero", target: "/book-call" }}
-                className="px-7 py-3.5 border border-white/50 text-white font-mono text-sm tracking-widest uppercase flex items-center gap-3 group/b hover:bg-white hover:text-black transition-colors"
+                className="px-7 py-3.5 border border-white/50 text-white font-mono text-sm tracking-widest uppercase flex items-center gap-3 group/b cta-glow"
               >
                 Book_Pipeline_Call
                 <ArrowRight className="w-4 h-4 group-hover/b:translate-x-1 transition-transform" />
@@ -231,7 +252,7 @@ export default function Home() {
                 href="/how-it-works"
                 eventName="cta_click"
                 eventMeta={{ location: "home_hero", target: "/how-it-works" }}
-                className="px-7 py-3.5 border border-white/25 text-white/75 font-mono text-sm tracking-widest uppercase hover:text-white hover:border-white/55 transition-colors"
+                className="px-7 py-3.5 border border-white/25 text-white/75 font-mono text-sm tracking-widest uppercase cta-glow"
               >
                 See How It Works
               </TrackedLink>
@@ -246,42 +267,37 @@ export default function Home() {
               { icon: <Mail className="w-4 h-4" />, label: "AI_ENGINE", sub: "MULTI-CHANNEL", indent: "ml-4" },
               { icon: <Calendar className="w-4 h-4" />, label: "BOOKED_MEETINGS", sub: "READY TO CLOSE", indent: "ml-8" },
             ] as SchematicNode[]).map((n, i) => (
-              <motion.div key={n.label} whileHover={{ borderColor: "rgba(255,255,255,0.6)", backgroundColor: "rgba(255,255,255,0.05)" }}
-                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: i * 0.35 }}
+              <motion.div key={n.label}
+                transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut", delay: i * 0.35 }}
                 animate={{
-                  y: [0, -2, 0],
-                  boxShadow: [
-                    "0 0 0 rgba(255,255,255,0)",
-                    "0 0 20px rgba(255,255,255,0.18)",
-                    "0 0 0 rgba(255,255,255,0)",
-                  ],
+                  y: [0, -1.5, 0],
                 }}
-                className={`border border-white/15 bg-transparent p-4 flex items-center gap-3 relative cursor-default ${n.indent ?? ""}`}>
+                className={`border border-white/15 bg-transparent p-4 flex items-center gap-3 relative cursor-default transform-gpu will-change-transform hover:border-white/55 hover:bg-white/[0.03] transition-colors ${n.indent ?? ""}`}>
                 {i > 0 && (
                   <div className="absolute left-8 -top-5 w-[1px] h-5 bg-white/10 overflow-hidden">
                     <motion.div
-                      className="w-full h-3 bg-white/65"
+                      className="w-full h-2 bg-white/45"
                       animate={{ y: ["-100%", "150%"] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: "linear", delay: i * 0.25 }}
+                      transition={{ duration: 2.2, repeat: Infinity, ease: "linear", delay: i * 0.25 }}
                     />
                   </div>
                 )}
                 {i < 2 && (
                   <div className="absolute left-8 -bottom-5 w-[1px] h-5 bg-white/10 overflow-hidden">
                     <motion.div
-                      className="w-full h-3 bg-white/65"
+                      className="w-full h-2 bg-white/45"
                       animate={{ y: ["-100%", "150%"] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: "linear", delay: (i + 1) * 0.2 }}
+                      transition={{ duration: 2.2, repeat: Infinity, ease: "linear", delay: (i + 1) * 0.2 }}
                     />
                   </div>
                 )}
                 <motion.div
                   className="absolute inset-0 pointer-events-none"
                   animate={{ x: ["-120%", "120%"] }}
-                  transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+                  transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
                   style={{
                     background:
-                      "linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.14) 50%, transparent 60%)",
+                      "linear-gradient(100deg, transparent 42%, rgba(255,255,255,0.09) 50%, transparent 58%)",
                   }}
                 />
                 <div className="w-9 h-9 border border-white/25 flex items-center justify-center text-white/60">{n.icon}</div>
@@ -309,13 +325,12 @@ export default function Home() {
                 { icon: <Users className="w-5 h-5" />, title: "Hiring SDRs is slow & expensive", body: "A single SDR costs $80–100k/year, takes 6 months to ramp, and still may not produce consistent results." },
                 { icon: <Target className="w-5 h-5" />, title: "You need a system, not a person", body: "Outbound at scale requires infrastructure, data, and automation — not headcount." },
               ].map(c => (
-                <motion.div key={c.title} whileHover={{ borderColor: "rgba(255,255,255,0.5)", backgroundColor: "rgba(255,255,255,0.03)" }}
-                  transition={{ duration: 0.15 }}
-                  className="border border-white/10 p-6 bg-white/[0.01] flex flex-col gap-4 cursor-default">
+                <div key={c.title}
+                  className="border border-white/10 p-6 bg-white/[0.01] flex flex-col gap-4 cursor-default hover:border-white/50 hover:bg-white/[0.03] transition-colors">
                   <div className="text-white/50">{c.icon}</div>
                   <h3 className="font-bold uppercase text-sm tracking-wide">{c.title}</h3>
                   <p className="font-mono text-xs text-white/40 leading-loose">{c.body}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </section>
@@ -341,14 +356,14 @@ export default function Home() {
                   { step: "02", label: "Reach", desc: "AI-crafted, hyper-personalised sequences across email and LinkedIn at scale." },
                   { step: "03", label: "Book", desc: "Replies are managed and qualified meetings land directly in your calendar." },
                 ].map(s => (
-                  <motion.div key={s.step} whileHover={{ borderColor: "rgba(255,255,255,0.45)" }} transition={{ duration: 0.15 }}
-                    className="border border-white/12 p-5 flex items-start gap-5 cursor-default">
+                  <div key={s.step}
+                    className="border border-white/12 p-5 flex items-start gap-5 cursor-default hover:border-white/45 transition-colors">
                     <span className="font-mono text-[10px] text-white/25 pt-1 flex-shrink-0">{s.step}</span>
                     <div>
                       <h3 className="font-bold uppercase text-sm mb-1">{s.label}</h3>
                       <p className="font-mono text-xs text-white/40 leading-loose">{s.desc}</p>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -407,9 +422,8 @@ export default function Home() {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {pipelineMetrics.map((c) => (
-                  <motion.div key={c.label} whileHover={{ borderColor: "rgba(255,255,255,0.5)", backgroundColor: "rgba(255,255,255,0.04)" }}
-                    transition={{ duration: 0.15 }}
-                    className={`p-5 border flex flex-col gap-3 cursor-default ${c.highlight ? "border-white/40" : "border-white/12"}`}>
+                  <div key={c.label}
+                    className={`p-5 border flex flex-col gap-3 cursor-default hover:border-white/50 hover:bg-white/[0.04] transition-colors ${c.highlight ? "border-white/40" : "border-white/12"}`}>
                     <div className="font-mono text-[10px] text-white/35 flex items-center gap-2">{c.icon}{c.label}</div>
                     <motion.div
                       key={`${c.label}-${pipelineStep}`}
@@ -420,7 +434,7 @@ export default function Home() {
                     >
                       {c.values[pipelineStep].toLocaleString()}
                     </motion.div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -442,8 +456,8 @@ export default function Home() {
                   ))}
                 </ul>
               </div>
-              <motion.div whileHover={{ borderColor: "rgba(255,255,255,0.6)" }} transition={{ duration: 0.2 }}
-                className="border border-white/35 p-8 bg-white/[0.02] relative cursor-default">
+              <div
+                className="border border-white/35 p-8 bg-white/[0.02] relative cursor-default hover:border-white/60 transition-colors">
                 <span className="font-mono text-[10px] text-white/50 uppercase absolute -top-3 left-6 bg-black px-2 border border-white/35">INCLUSIONS</span>
                 <ul className="flex flex-col gap-5">
                   {["Targeted B2B Lead Sourcing", "Multi-channel Outreach (Email + LinkedIn)", "AI-Powered Personalisation at Scale", "Inbox Management & Meeting Booking"].map(item => (
@@ -452,7 +466,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </div>
             </div>
             <p className="mt-7 text-center font-mono text-sm text-white/65">
               Just qualified meetings on your calendar.
@@ -470,9 +484,8 @@ export default function Home() {
                 { tier: "GROWTH", price: "$2,500", specs: ["1,000 contacts/mo", "Email + LinkedIn", "4 sending domains"], target: "12–20 CALLS/MO", featured: true },
                 { tier: "SCALE", price: "$5,000", specs: ["2,000+ contacts/mo", "Multi-channel dominance", "Dedicated support"], target: "25–40 CALLS/MO", featured: false },
               ].map(t => (
-                <motion.div key={t.tier} whileHover={{ borderColor: "rgba(255,255,255,0.7)", backgroundColor: "rgba(255,255,255,0.04)" }}
-                  transition={{ duration: 0.18 }}
-                  className={`border p-7 flex flex-col relative cursor-default ${t.featured ? "border-white/50 bg-white/[0.025]" : "border-white/12 bg-white/[0.01]"}`}>
+                <div key={t.tier}
+                  className={`border p-7 flex flex-col relative cursor-default hover:border-white/70 hover:bg-white/[0.04] transition-colors ${t.featured ? "border-white/50 bg-white/[0.025]" : "border-white/12 bg-white/[0.01]"}`}>
                   {t.featured && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[10px] bg-black border border-white/35 px-3 py-1 uppercase whitespace-nowrap">
                       RECOMMENDED
@@ -497,11 +510,11 @@ export default function Home() {
                     href="/book-call"
                     eventName="cta_click"
                     eventMeta={{ location: "home_pricing_card", target: `/book-call_${t.tier}` }}
-                    className="w-full py-3 border border-white/25 text-white/55 font-mono text-xs uppercase text-center hover:bg-white hover:text-black transition-colors"
+                    className="w-full py-3 border border-white/25 text-white/55 font-mono text-xs uppercase text-center cta-glow"
                   >
                     Initialize {t.tier} →
                   </TrackedLink>
-                </motion.div>
+                </div>
               ))}
             </div>
             <p className="font-mono text-[10px] text-white/25 mt-6 text-center">* One-time setup fee of $500–$1,500 applies to all plans.</p>
@@ -553,12 +566,12 @@ export default function Home() {
                 { icon: <Target className="w-6 h-6" />, title: "No Vanity Metrics", body: "We report on meetings booked, not opens, clicks, or impressions. You only care about calls." },
                 { icon: <Zap className="w-6 h-6" />, title: "Ramp in 2–3 Weeks", body: "Setup fee covers infrastructure. First outreach goes live within 14–21 days of onboarding." },
               ].map(c => (
-                <motion.div key={c.title} whileHover={{ borderColor: "rgba(255,255,255,0.35)" }} transition={{ duration: 0.15 }}
-                  className="flex flex-col items-center gap-4 p-6 border border-transparent cursor-default">
+                <div key={c.title}
+                  className="flex flex-col items-center gap-4 p-6 border border-transparent cursor-default hover:border-white/35 transition-colors">
                   <div className="text-white/40">{c.icon}</div>
                   <h3 className="font-bold uppercase text-sm tracking-wide">{c.title}</h3>
                   <p className="font-mono text-xs text-white/35 leading-loose">{c.body}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </section>
@@ -580,7 +593,7 @@ export default function Home() {
               href="/book-call"
               eventName="cta_click"
               eventMeta={{ location: "home_final_cta", target: "/book-call" }}
-              className="px-10 py-5 border border-white/50 text-white font-mono text-sm tracking-widest uppercase flex items-center gap-3 group/c mx-auto hover:bg-white hover:text-black transition-colors"
+              className="px-10 py-5 border border-white/50 text-white font-mono text-sm tracking-widest uppercase flex items-center gap-3 group/c mx-auto cta-glow"
             >
               Book a Strategy Call
               <ArrowRight className="w-5 h-5 group-hover/c:translate-x-1 transition-transform" />
