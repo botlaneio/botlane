@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Calendar, CheckCircle2, Mail, Send } from "lucide-react";
+import { Calendar, CheckCircle2, Mail, Send, X } from "lucide-react";
 import Link from "next/link";
 import {
   useEffect,
@@ -180,47 +180,6 @@ function getDerived(state: SimulatorState) {
   };
 }
 
-function getStepImpactChips(state: SimulatorState, derived: ReturnType<typeof getDerived>, baseline: ReturnType<typeof getDerived>) {
-  const emailDelta = derived.emailsSent - baseline.emailsSent;
-  const openDelta = derived.openRate - baseline.openRate;
-  const replyDelta = derived.replyRate - baseline.replyRate;
-  const qualifiedDelta = derived.qualifiedRate - baseline.qualifiedRate;
-
-  if (state.step === 0) {
-    return [
-      { label: "ICP Fit", value: state.icp === "Enterprise" ? "High-value ACVs" : state.icp === "SMB" ? "Higher volume" : "Balanced quality" },
-      { label: "Prospect Coverage", value: `${Math.round(derived.emailsSent * 0.6).toLocaleString()} mapped` },
-      { label: "Open-rate Impact", value: `${openDelta >= 0 ? "+" : ""}${openDelta}%` },
-    ];
-  }
-  if (state.step === 1) {
-    return [
-      { label: "Tone Mode", value: state.tone },
-      { label: "Open-rate Delta", value: `${openDelta >= 0 ? "+" : ""}${openDelta}%` },
-      { label: "Reply-rate Delta", value: `${replyDelta >= 0 ? "+" : ""}${replyDelta}%` },
-    ];
-  }
-  if (state.step === 2) {
-    return [
-      { label: "Active Channels", value: `${state.channels.email ? "Email" : ""}${state.channels.email && state.channels.linkedin ? " + " : ""}${state.channels.linkedin ? "LinkedIn" : ""}` || "None" },
-      { label: "Email Volume Delta", value: `${emailDelta >= 0 ? "+" : ""}${emailDelta}` },
-      { label: "Cadence", value: state.cadence },
-    ];
-  }
-  if (state.step === 3) {
-    return [
-      { label: "Qualification Mode", value: state.replyLogic },
-      { label: "Qualified-rate Delta", value: `${qualifiedDelta >= 0 ? "+" : ""}${qualifiedDelta}%` },
-      { label: "Qualified Leads", value: derived.qualified.toLocaleString() },
-    ];
-  }
-  return [
-    { label: "Timezone", value: state.timezone },
-    { label: "Meeting Range", value: `${derived.meetings}/mo` },
-    { label: "Handoff", value: "Calendar-ready" },
-  ];
-}
-
 export function PipelineSimulator({ className }: PipelineSimulatorProps) {
   const [state, dispatch] = useReducer(simulatorReducer, INITIAL_STATE);
   const [offerFocused, setOfferFocused] = useState(false);
@@ -230,7 +189,6 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
   const [shareCopied, setShareCopied] = useState(false);
 
   const derived = useMemo(() => getDerived(state), [state]);
-  const baselineDerived = useMemo(() => getDerived(INITIAL_STATE), []);
   const filteredIndustries = useMemo(
     () => INDUSTRY_SUGGESTIONS.filter((x) => x.toLowerCase().includes(state.offer.toLowerCase())).slice(0, 6),
     [state.offer],
@@ -238,18 +196,6 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
   const filteredCountries = useMemo(
     () => COUNTRY_SUGGESTIONS.filter((x) => x.toLowerCase().includes(state.location.toLowerCase())).slice(0, 6),
     [state.location],
-  );
-
-  const activityFeed = useMemo(
-    () => [
-      `Prospect list synced for ${state.icp} ${state.offer} teams in ${state.location}`,
-      state.channels.email ? `Email sent to Founder at ${state.offer} studio` : "Email channel paused",
-      state.channels.linkedin ? "LinkedIn touchpoint queued for target account list" : "LinkedIn channel paused",
-      `Reply logic set to ${state.replyLogic}`,
-      `Meeting slot routed in ${state.timezone}`,
-      `Projected qualified meetings: ${derived.meetings}/month`,
-    ],
-    [state, derived.meetings],
   );
 
   const emailPreview = useMemo(() => {
@@ -261,10 +207,6 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
     }
     return `Hi, teams offering ${state.offer} in ${state.location} use Botlane to run AI-personalized outbound that consistently books qualified calls.`;
   }, [state.offer, state.location, state.tone]);
-  const stepImpactChips = useMemo(
-    () => getStepImpactChips(state, derived, baselineDerived),
-    [state, derived, baselineDerived],
-  );
   const pipelineConfidence = useMemo(() => {
     let score = 66;
     if (state.channels.email && state.channels.linkedin) score += 10;
@@ -314,6 +256,41 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
     ],
     [state.step, state.offer, state.location],
   );
+  const stepExecutionNotes = useMemo(() => {
+    if (state.step === 0) {
+      return [
+        { label: "Matched Accounts", value: Math.round(derived.emailsSent * 0.52).toLocaleString() },
+        { label: "ICP Fit", value: state.icp === "Enterprise" ? "High-value ACVs" : state.icp === "SMB" ? "Higher volume" : "Balanced quality" },
+        { label: "Intent Signals", value: Math.round(derived.emailsSent * 0.14).toLocaleString() },
+      ];
+    }
+    if (state.step === 1) {
+      return [
+        { label: "Tone Benchmark", value: state.tone },
+        { label: "Open Rate", value: `${derived.openRate}%` },
+        { label: "Reply Rate", value: `${derived.replyRate}%` },
+      ];
+    }
+    if (state.step === 2) {
+      return [
+        { label: "Channels", value: `${state.channels.email ? "Email" : ""}${state.channels.email && state.channels.linkedin ? " + " : ""}${state.channels.linkedin ? "LinkedIn" : ""}` || "None" },
+        { label: "Cadence", value: state.cadence },
+        { label: "Emails/Month", value: derived.emailsSent.toLocaleString() },
+      ];
+    }
+    if (state.step === 3) {
+      return [
+        { label: "Interested", value: Math.round(derived.replies * 0.52).toLocaleString() },
+        { label: "Not now", value: Math.round(derived.replies * 0.28).toLocaleString() },
+        { label: "Not fit", value: Math.max(0, derived.replies - Math.round(derived.replies * 0.8)).toLocaleString() },
+      ];
+    }
+    return [
+      { label: "Timezone", value: state.timezone },
+      { label: "Meeting Range", value: `${derived.meetings}/mo` },
+      { label: "Handoff", value: "Calendar-ready" },
+    ];
+  }, [state, derived]);
 
   const shareUrl = useMemo(() => {
     const params = new URLSearchParams({
@@ -384,13 +361,6 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
     "Confirm handoff window",
   ];
 
-  const nodeValues = [
-    { label: "Prospects", value: Math.round(derived.emailsSent * 0.6) },
-    { label: "Emails", value: derived.emailsSent },
-    { label: "Replies", value: derived.replies },
-    { label: "Meetings", value: derived.meetings },
-  ];
-
   function handleOfferKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (!offerFocused || filteredIndustries.length === 0) return;
     if (event.key === "ArrowDown") {
@@ -436,6 +406,11 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
 
   function goBack() {
     dispatch({ type: "set_step", payload: state.step - 1 });
+  }
+
+  function closeResultsModal() {
+    dispatch({ type: "set_phase", payload: "configure" });
+    dispatch({ type: "set_step", payload: 0 });
   }
 
   function applyPreset(preset: ScenarioPreset) {
@@ -532,8 +507,8 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
           </button>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          <div className="border border-white/12 bg-black/25 p-5 space-y-5">
+        <div className="grid lg:grid-cols-[0.94fr_1.06fr] gap-5">
+          <div className="border border-white/12 bg-black/25 p-5 space-y-5 lg:max-h-[74vh] lg:overflow-y-auto [scrollbar-color:rgba(255,255,255,0.25)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-white/25 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-corner]:bg-transparent">
             <div className="flex items-center gap-2 flex-wrap">
               {stepItems.map((item, i) => (
                 <button
@@ -556,18 +531,18 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.22, ease: "easeOut" }}
-                className="space-y-4"
+                className="space-y-4 lg:min-h-[175px]"
               >
                 {state.step === 0 && (
                   <>
                     <p className="font-mono text-xs text-white/45 uppercase tracking-widest">
                       Step 1 // Define market
                     </p>
-                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
+                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest min-h-[26px]">
                       {STEP_IMPACT_COPY[0]}
                     </p>
                     <div className="grid md:grid-cols-2 gap-3">
-                      <label className="font-mono text-[10px] text-white/45 uppercase tracking-widest space-y-2">
+                      <label className="relative font-mono text-[10px] text-white/45 uppercase tracking-widest space-y-2">
                         What do you sell?
                         <input
                           value={state.offer}
@@ -578,7 +553,7 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                           className="h-10 w-full border border-white/20 bg-black px-3 text-sm normal-case text-white/90"
                         />
                         {offerFocused && filteredIndustries.length > 0 && (
-                          <div className="border border-white/20 bg-black">
+                          <div className="absolute left-0 right-0 top-full mt-1 z-20 border border-white/20 bg-black max-h-40 overflow-y-auto">
                             {filteredIndustries.map((item, i) => (
                               <button
                                 key={item}
@@ -598,7 +573,7 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                           </div>
                         )}
                       </label>
-                      <label className="font-mono text-[10px] text-white/45 uppercase tracking-widest space-y-2">
+                      <label className="relative font-mono text-[10px] text-white/45 uppercase tracking-widest space-y-2">
                         Where do you operate?
                         <input
                           value={state.location}
@@ -609,7 +584,7 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                           className="h-10 w-full border border-white/20 bg-black px-3 text-sm normal-case text-white/90"
                         />
                         {locationFocused && filteredCountries.length > 0 && (
-                          <div className="border border-white/20 bg-black">
+                          <div className="absolute left-0 right-0 top-full mt-1 z-20 border border-white/20 bg-black max-h-40 overflow-y-auto">
                             {filteredCountries.map((item, i) => (
                               <button
                                 key={item}
@@ -650,7 +625,7 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                 {state.step === 1 && (
                   <>
                     <p className="font-mono text-xs text-white/45 uppercase tracking-widest">Step 2 // Set tone</p>
-                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
+                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest min-h-[26px]">
                       {STEP_IMPACT_COPY[1]}
                     </p>
                     <div className="flex gap-2 flex-wrap">
@@ -676,7 +651,7 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                 {state.step === 2 && (
                   <>
                     <p className="font-mono text-xs text-white/45 uppercase tracking-widest">Step 3 // Configure channels</p>
-                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
+                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest min-h-[26px]">
                       {STEP_IMPACT_COPY[2]}
                     </p>
                     <div className="flex items-center gap-2 flex-wrap">
@@ -717,7 +692,7 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                 {state.step === 3 && (
                   <>
                     <p className="font-mono text-xs text-white/45 uppercase tracking-widest">Step 4 // Qualification logic</p>
-                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
+                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest min-h-[26px]">
                       {STEP_IMPACT_COPY[3]}
                     </p>
                     <div className="flex gap-2 flex-wrap">
@@ -740,7 +715,7 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                 {state.step === 4 && (
                   <>
                     <p className="font-mono text-xs text-white/45 uppercase tracking-widest">Step 5 // Handoff window</p>
-                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
+                    <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest min-h-[26px]">
                       {STEP_IMPACT_COPY[4]}
                     </p>
                     <div className="flex gap-2 flex-wrap">
@@ -780,38 +755,21 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                 {state.step < 4 ? "Continue →" : "Generate AI Forecast →"}
               </button>
             </div>
+
+            <div className="border border-white/15 p-3">
+              <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest mb-2">Trust Checkpoints</p>
+              <div className="grid md:grid-cols-2 gap-1.5">
+                {trustCheckpoints.map((item) => (
+                  <p key={item.label} className={`font-mono text-[10px] uppercase tracking-widest ${item.done ? "text-emerald-200/85" : "text-white/35"}`}>
+                    {item.done ? "✓" : "•"} {item.label}
+                  </p>
+                ))}
+              </div>
+            </div>
+
           </div>
 
-          <div className="border border-white/12 bg-black/25 p-5 space-y-5">
-            <div className="grid grid-cols-4 gap-3 opacity-75">
-              {nodeValues.map((node, i) => (
-                <motion.div
-                  key={node.label}
-                  className="border border-white/20 p-3 text-center relative overflow-hidden"
-                >
-                  <motion.div
-                    className="absolute left-0 top-0 h-[2px] bg-white/60"
-                    animate={{ width: ["0%", "100%"] }}
-                    transition={{ duration: 2.2, repeat: Infinity, ease: "linear", delay: i * 0.2 }}
-                  />
-                  <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest">{node.label}</p>
-                  <p className="text-xl font-bold mt-2">{node.value}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-2 opacity-85">
-              {stepImpactChips.map((chip) => (
-                <motion.div
-                  key={chip.label}
-                  className="border border-white/20 p-3 bg-white/[0.01]"
-                >
-                  <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest">{chip.label}</p>
-                  <p className="font-mono text-xs text-white/80 mt-1">{chip.value}</p>
-                </motion.div>
-              ))}
-            </div>
-
+          <div className="border border-white/12 bg-black/20 p-4 space-y-4">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`live-module-${state.step}`}
@@ -819,7 +777,7 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.24, ease: "easeOut" }}
-                className="border border-white/15 p-4 min-h-[190px]"
+                className="border border-white/15 p-4 min-h-[230px]"
               >
                 {state.step === 0 && (
                   <div className="space-y-4">
@@ -913,59 +871,63 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
                     </p>
                   </div>
                 )}
+                <div className="border-t border-white/10 pt-3">
+                  <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest mb-2">Execution Notes</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    {stepExecutionNotes.map((note) => (
+                      <div key={note.label} className="border border-white/15 p-2.5 bg-white/[0.01]">
+                        <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest">{note.label}</p>
+                        <p className="font-mono text-xs text-white/80 mt-1">{note.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
             </AnimatePresence>
 
-            <div className="grid md:grid-cols-2 gap-3">
-              <div className="border border-white/15 p-4 min-h-[190px]">
-                <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest mb-2">Live Metrics</p>
-                <p className="font-mono text-xs text-white/70">Open rate: {derived.openRate}%</p>
-                <p className="font-mono text-xs text-white/70">Reply rate: {derived.replyRate}%</p>
-                <p className="font-mono text-xs text-white/70">Qualified rate: {derived.qualifiedRate}%</p>
-                <div className="mt-3">
+            <div className="border border-white/15 p-4 md:p-5 min-h-[270px]">
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest">Live Metrics</p>
+                <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest border border-white/20 px-2 py-1">
+                  AI-calibrated
+                </span>
+              </div>
+
+              <div className="grid md:grid-cols-[1.2fr_0.8fr] gap-4">
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { label: "Open", value: `${derived.openRate}%` },
+                    { label: "Reply", value: `${derived.replyRate}%` },
+                    { label: "Qualified", value: `${derived.qualifiedRate}%` },
+                  ].map((metric) => (
+                    <div key={metric.label} className="border border-white/15 bg-white/[0.01] p-3">
+                      <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest">{metric.label}</p>
+                      <p className="font-bold text-xl mt-1">{metric.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border border-white/15 bg-white/[0.01] p-3">
                   <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">Pipeline Confidence</p>
-                  <div className="relative h-[2px] bg-white/10 mt-2">
+                  <div className="relative h-[4px] bg-white/10 mt-3">
                     <motion.div
                       className="absolute left-0 top-0 h-full bg-white/70"
                       animate={{ width: `${pipelineConfidence}%` }}
                       transition={{ duration: 0.35, ease: "easeOut" }}
                     />
                   </div>
-                  <p className="font-mono text-xs text-white/75 mt-2">{pipelineConfidence}% confidence</p>
-                </div>
-                <p className="mt-3 font-mono text-[10px] text-white/45 uppercase tracking-widest">
-                  Why this changed: {metricRationale}
-                </p>
-                <div className="mt-4 border-t border-white/10 pt-3">
-                  <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest mb-2">Trust Checkpoints</p>
-                  <div className="grid grid-cols-1 gap-1.5">
-                    {trustCheckpoints.map((item) => (
-                      <p key={item.label} className={`font-mono text-[10px] uppercase tracking-widest ${item.done ? "text-emerald-200/85" : "text-white/35"}`}>
-                        {item.done ? "✓" : "•"} {item.label}
-                      </p>
-                    ))}
-                  </div>
+                  <p className="font-mono text-sm text-white/80 mt-3">{pipelineConfidence}% confidence</p>
                 </div>
               </div>
-              <div className="border border-white/15 p-4 min-h-[190px]">
-                <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest mb-2">Activity Feed</p>
-                <div className="space-y-1.5">
-                  {activityFeed.slice(0, 3).map((line, idx) => (
-                    <motion.p
-                      key={`feed-${idx}`}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.2 }}
-                      className="font-mono text-xs text-white/65"
-                    >
-                      {line}
-                    </motion.p>
-                  ))}
-                </div>
-              </div>
+
+              <p className="mt-4 font-mono text-[10px] text-white/45 uppercase tracking-widest">
+                Why this changed: {metricRationale}
+              </p>
+
             </div>
 
             {anomalies.length > 0 && (
-              <div className="grid md:grid-cols-2 gap-3">
+              <div className="grid md:grid-cols-1 gap-3">
                 {anomalies.map((alert) => (
                   <div key={alert.id} className="border border-amber-300/35 bg-amber-500/5 p-3">
                     <p className="font-mono text-[10px] text-amber-200/80 uppercase tracking-widest">Live Alert</p>
@@ -1018,70 +980,88 @@ export function PipelineSimulator({ className }: PipelineSimulatorProps) {
         <AnimatePresence>
           {state.phase === "results" && (
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="mt-6 border border-white/20 bg-white/[0.02] p-5 md:p-6"
+              className="fixed inset-0 z-[90] bg-black/85 backdrop-blur-sm flex items-center justify-center px-4 py-8"
             >
-              <div className="flex flex-wrap items-start justify-between gap-5">
-                <div className="space-y-2">
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                className="w-full max-w-5xl border border-white/20 bg-black p-5 md:p-6 lg:max-h-[86vh] overflow-y-auto [scrollbar-color:rgba(255,255,255,0.25)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-white/25 [&::-webkit-scrollbar-thumb]:rounded-full"
+              >
+                <div className="flex items-start justify-between gap-4 mb-4">
                   <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest">
                     Results Dashboard // AI-optimized
                   </p>
-                  <h4 className="text-2xl md:text-3xl font-bold uppercase leading-tight">
-                    {derived.meetings} meetings/month projected
-                    <br />
-                    for {state.offer} in {state.location}
-                  </h4>
-                  <p className="font-mono text-xs text-white/50">Based on similar campaigns</p>
-                </div>
-                <div className="flex gap-3">
-                  <Link
-                    href="/book-call"
-                    onClick={() => trackEvent("pipeline_simulator_cta_click", { target: "/book-call" })}
-                    className="px-6 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest cta-glow"
+                  <button
+                    type="button"
+                    onClick={closeResultsModal}
+                    className="w-9 h-9 border border-white/25 flex items-center justify-center text-white/70 hover:text-white hover:border-white/50 transition-colors"
+                    aria-label="Close results"
                   >
-                    Start Your Pipeline →
-                  </Link>
-                  <Link
-                    href="/contact"
-                    onClick={() => trackEvent("pipeline_simulator_cta_click", { target: "/contact" })}
-                    className="px-6 py-3 border border-white/25 text-white/80 font-mono text-xs uppercase tracking-widest cta-glow"
-                  >
-                    Book a Demo →
-                  </Link>
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
-              </div>
 
-              <div className="mt-5 grid md:grid-cols-5 gap-3">
-                <div className="border border-white/15 p-3">
-                  <p className="font-mono text-[10px] text-white/45 uppercase">Emails Sent</p>
-                  <p className="text-2xl font-bold">{derived.emailsSent}</p>
+                <div className="flex flex-wrap items-start justify-between gap-5">
+                  <div className="space-y-2">
+                    <h4 className="text-2xl md:text-3xl font-bold uppercase leading-tight">
+                      {derived.meetings} meetings/month projected
+                      <br />
+                      for {state.offer} in {state.location}
+                    </h4>
+                    <p className="font-mono text-xs text-white/50">Based on similar campaigns</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Link
+                      href="/book-call"
+                      onClick={() => trackEvent("pipeline_simulator_cta_click", { target: "/book-call" })}
+                      className="px-6 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest cta-glow"
+                    >
+                      Start Your Pipeline →
+                    </Link>
+                    <Link
+                      href="/contact"
+                      onClick={() => trackEvent("pipeline_simulator_cta_click", { target: "/contact" })}
+                      className="px-6 py-3 border border-white/25 text-white/80 font-mono text-xs uppercase tracking-widest cta-glow"
+                    >
+                      Book a Demo →
+                    </Link>
+                  </div>
                 </div>
-                <div className="border border-white/15 p-3">
-                  <p className="font-mono text-[10px] text-white/45 uppercase">Open Rate</p>
-                  <p className="text-2xl font-bold">{derived.openRate}%</p>
-                </div>
-                <div className="border border-white/15 p-3">
-                  <p className="font-mono text-[10px] text-white/45 uppercase">Replies</p>
-                  <p className="text-2xl font-bold">{derived.replies}</p>
-                </div>
-                <div className="border border-white/15 p-3">
-                  <p className="font-mono text-[10px] text-white/45 uppercase">Qualified Leads</p>
-                  <p className="text-2xl font-bold">{derived.qualified}</p>
-                </div>
-                <div className="border border-white/40 p-3 bg-white/[0.02]">
-                  <p className="font-mono text-[10px] text-white/60 uppercase">Meetings Booked</p>
-                  <p className="text-2xl font-bold">{derived.meetings}</p>
-                </div>
-              </div>
 
-              <div className="mt-4 flex flex-wrap gap-4 text-xs font-mono text-white/60">
-                <span className="inline-flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> Email automation active</span>
-                <span className="inline-flex items-center gap-1"><Send className="w-3.5 h-3.5" /> Multi-channel delivery</span>
-                <span className="inline-flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> AI qualification rules</span>
-                <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> Calendar handoff ready</span>
-              </div>
+                <div className="mt-5 grid md:grid-cols-5 gap-3">
+                  <div className="border border-white/15 p-3">
+                    <p className="font-mono text-[10px] text-white/45 uppercase">Emails Sent</p>
+                    <p className="text-2xl font-bold">{derived.emailsSent}</p>
+                  </div>
+                  <div className="border border-white/15 p-3">
+                    <p className="font-mono text-[10px] text-white/45 uppercase">Open Rate</p>
+                    <p className="text-2xl font-bold">{derived.openRate}%</p>
+                  </div>
+                  <div className="border border-white/15 p-3">
+                    <p className="font-mono text-[10px] text-white/45 uppercase">Replies</p>
+                    <p className="text-2xl font-bold">{derived.replies}</p>
+                  </div>
+                  <div className="border border-white/15 p-3">
+                    <p className="font-mono text-[10px] text-white/45 uppercase">Qualified Leads</p>
+                    <p className="text-2xl font-bold">{derived.qualified}</p>
+                  </div>
+                  <div className="border border-white/40 p-3 bg-white/[0.02]">
+                    <p className="font-mono text-[10px] text-white/60 uppercase">Meetings Booked</p>
+                    <p className="text-2xl font-bold">{derived.meetings}</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-4 text-xs font-mono text-white/60">
+                  <span className="inline-flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> Email automation active</span>
+                  <span className="inline-flex items-center gap-1"><Send className="w-3.5 h-3.5" /> Multi-channel delivery</span>
+                  <span className="inline-flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> AI qualification rules</span>
+                  <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> Calendar handoff ready</span>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
