@@ -36,7 +36,7 @@ const FOOTER_LINK_GROUPS = [
 export function SiteFooter() {
   return (
     <footer className="w-full border-t border-white/10 pt-10 mt-6">
-      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
         <div className="space-y-4">
           <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest">
             Botlane.io
@@ -54,25 +54,6 @@ export function SiteFooter() {
           >
             Book Strategy Call
           </Link>
-          <div className="pt-2 space-y-2">
-            <p className="font-mono text-xs text-white/45 normal-case">
-              30 N Gould St Ste R
-              <br />
-              Sheridan, WY 82801
-            </p>
-            <a
-              href="mailto:admin@botlane.io"
-              className="block font-mono text-xs text-white/40 hover:text-white/75 transition-colors normal-case"
-            >
-              admin@botlane.io
-            </a>
-            <a
-              href="mailto:help@botlane.io"
-              className="block font-mono text-xs text-white/40 hover:text-white/75 transition-colors normal-case"
-            >
-              help@botlane.io
-            </a>
-          </div>
         </div>
 
         {FOOTER_LINK_GROUPS.map((group) => (
@@ -93,6 +74,31 @@ export function SiteFooter() {
             </div>
           </div>
         ))}
+
+        <div className="space-y-3">
+          <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest">
+            Contact
+          </p>
+          <div className="space-y-2">
+            <p className="font-mono text-xs text-white/45 normal-case">
+              30 N Gould St Ste R
+              <br />
+              Sheridan, WY 82801
+            </p>
+            <a
+              href="mailto:admin@botlane.io"
+              className="block font-mono text-xs text-white/40 hover:text-white/75 transition-colors normal-case"
+            >
+              admin@botlane.io
+            </a>
+            <a
+              href="mailto:help@botlane.io"
+              className="block font-mono text-xs text-white/40 hover:text-white/75 transition-colors normal-case"
+            >
+              help@botlane.io
+            </a>
+          </div>
+        </div>
       </div>
 
       <div className="mt-10 pt-5 border-t border-white/8 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
