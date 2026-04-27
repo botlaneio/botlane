@@ -5,6 +5,7 @@ const FOOTER_LINK_GROUPS = [
     title: "Navigation",
     links: [
       { label: "Home", href: "/" },
+      { label: "How It Works", href: "/how-it-works" },
       { label: "Metrics", href: "/metrics" },
       { label: "Pricing", href: "/pricing" },
       { label: "Contact", href: "/contact" },
@@ -22,10 +23,12 @@ const FOOTER_LINK_GROUPS = [
   {
     title: "Company",
     links: [
-      { label: "Why Botlane", href: "/" },
-      { label: "Case Signals", href: "/metrics" },
+      { label: "How It Works", href: "/how-it-works" },
+      { label: "Why Botlane", href: "/about" },
+      { label: "Case Signals", href: "/case-studies" },
+      { label: "FAQ", href: "/faq" },
       { label: "Plans", href: "/pricing" },
-      { label: "Book a Call", href: "/contact" },
+      { label: "Book a Call", href: "/book-call" },
     ],
   },
 ];
@@ -97,10 +100,10 @@ export function SiteFooter() {
           BOTLANE.IO // END_OF_DOCUMENT
         </span>
         <div className="flex items-center gap-4 font-mono text-[10px] text-white/30 uppercase tracking-widest">
-          <Link href="/" className="hover:text-white/65 transition-colors">
+          <Link href="/privacy" className="hover:text-white/65 transition-colors">
             Privacy
           </Link>
-          <Link href="/" className="hover:text-white/65 transition-colors">
+          <Link href="/terms" className="hover:text-white/65 transition-colors">
             Terms
           </Link>
           <span>2026</span>
