@@ -51,6 +51,25 @@ export function SiteFooter() {
           >
             Book Strategy Call
           </Link>
+          <div className="pt-2 space-y-2">
+            <p className="font-mono text-xs text-white/45 normal-case">
+              30 N Gould St Ste R
+              <br />
+              Sheridan, WY 82801
+            </p>
+            <a
+              href="mailto:admin@botlane.io"
+              className="block font-mono text-xs text-white/40 hover:text-white/75 transition-colors normal-case"
+            >
+              admin@botlane.io
+            </a>
+            <a
+              href="mailto:help@botlane.io"
+              className="block font-mono text-xs text-white/40 hover:text-white/75 transition-colors normal-case"
+            >
+              help@botlane.io
+            </a>
+          </div>
         </div>
 
         {FOOTER_LINK_GROUPS.map((group) => (

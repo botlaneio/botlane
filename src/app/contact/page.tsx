@@ -29,6 +29,40 @@ export default function ContactPage() {
               Back Home
             </Link>
           </div>
+          <div className="mt-10 pt-8 border-t border-white/10 grid md:grid-cols-3 gap-6 text-left">
+            <div>
+              <p className="font-mono text-[10px] text-white/35 uppercase tracking-widest mb-2">
+                Office
+              </p>
+              <p className="font-mono text-xs text-white/45 leading-relaxed normal-case">
+                30 N Gould St Ste R
+                <br />
+                Sheridan, WY 82801
+              </p>
+            </div>
+            <div>
+              <p className="font-mono text-[10px] text-white/35 uppercase tracking-widest mb-2">
+                Admin
+              </p>
+              <a
+                href="mailto:admin@botlane.io"
+                className="font-mono text-xs text-white/45 hover:text-white/75 transition-colors normal-case"
+              >
+                admin@botlane.io
+              </a>
+            </div>
+            <div>
+              <p className="font-mono text-[10px] text-white/35 uppercase tracking-widest mb-2">
+                Support
+              </p>
+              <a
+                href="mailto:help@botlane.io"
+                className="font-mono text-xs text-white/45 hover:text-white/75 transition-colors normal-case"
+              >
+                help@botlane.io
+              </a>
+            </div>
+          </div>
         </section>
         <SiteFooter />
       </div>
