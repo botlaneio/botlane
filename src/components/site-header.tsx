@@ -21,7 +21,7 @@ export function SiteHeader() {
 
   return (
     <header className="w-full border-b border-white/15 pb-4">
-      <div className="flex justify-between items-end gap-4">
+      <div className="flex justify-between items-end gap-4 md:grid md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-end md:gap-8">
         <div className="flex items-center gap-4">
           <Link
             href="/"
@@ -41,17 +41,7 @@ export function SiteHeader() {
           </div>
         </div>
 
-        <button
-          type="button"
-          className="md:hidden w-10 h-10 border border-white/40 flex items-center justify-center text-white/80 hover:text-white hover:border-white/60 transition-colors"
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileOpen}
-          onClick={() => setMobileOpen((prev) => !prev)}
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-
-        <nav className="hidden md:flex gap-8 font-mono text-xs tracking-widest text-white/35">
+        <nav className="hidden md:flex justify-self-center justify-center md:translate-x-4 gap-8 font-mono text-xs tracking-widest text-white/35">
           {NAV_ITEMS.map((item) => (
             <TrackedLink
               key={item.href}
@@ -68,15 +58,26 @@ export function SiteHeader() {
               {item.label}
             </TrackedLink>
           ))}
-          <TrackedLink
-            href="/book-call"
-            eventName="cta_click"
-            eventMeta={{ location: "header_desktop", target: "/book-call" }}
-            className="px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs hover:bg-white hover:text-black transition-colors"
-          >
-            Initialize
-          </TrackedLink>
         </nav>
+
+        <TrackedLink
+          href="/book-call"
+          eventName="cta_click"
+          eventMeta={{ location: "header_desktop", target: "/book-call" }}
+          className="hidden md:inline-flex px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs hover:bg-white hover:text-black transition-colors"
+        >
+          Initialize
+        </TrackedLink>
+
+        <button
+          type="button"
+          className="md:hidden w-10 h-10 border border-white/40 flex items-center justify-center text-white/80 hover:text-white hover:border-white/60 transition-colors"
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen((prev) => !prev)}
+        >
+          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
 
       {mobileOpen && (

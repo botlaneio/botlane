@@ -35,6 +35,40 @@ function SectionTag({ index, label }: { index: string; label: string }) {
   );
 }
 
+function TypewriterLine({
+  text,
+  speedMs = 38,
+  className,
+}: {
+  text: string;
+  speedMs?: number;
+  className?: string;
+}) {
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [showCaret, setShowCaret] = useState(true);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setVisibleCount((prev) => (prev < text.length ? prev + 1 : prev));
+    }, speedMs);
+    return () => window.clearInterval(interval);
+  }, [text, speedMs]);
+
+  useEffect(() => {
+    const caretInterval = window.setInterval(() => {
+      setShowCaret((prev) => !prev);
+    }, 500);
+    return () => window.clearInterval(caretInterval);
+  }, []);
+
+  return (
+    <p className={className}>
+      {text.slice(0, visibleCount)}
+      <span className={`${showCaret ? "opacity-100" : "opacity-0"} transition-opacity`}>_</span>
+    </p>
+  );
+}
+
 type SchematicNode = {
   icon: React.ReactNode;
   label: string;
@@ -116,16 +150,59 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="relative z-10 w-full max-w-[1300px] mx-auto px-8 lg:px-16 pt-14 pb-36 flex flex-col gap-40">
+      <div className="relative z-10 w-full max-w-[1300px] mx-auto px-8 lg:px-16 pt-14 pb-36 flex flex-col gap-28">
+        <div className="flex flex-col gap-4">
+          <SiteHeader />
 
-        <SiteHeader />
-
-        {/* ── HERO ── */}
-        <section className="w-full grid lg:grid-cols-[1fr_280px] gap-8 border border-white/15 bg-white/[0.015] p-10">
+          {/* ── HERO ── */}
+          <motion.section
+            className="w-full grid lg:grid-cols-[1fr_280px] gap-8 border border-white/15 bg-white/[0.015] p-10 relative overflow-hidden"
+          animate={{
+            boxShadow: [
+              "inset 0 0 0 1px rgba(255,255,255,0.02)",
+              "inset 0 0 0 1px rgba(255,255,255,0.08)",
+              "inset 0 0 0 1px rgba(255,255,255,0.02)",
+            ],
+          }}
+          transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <motion.div
+            className="pointer-events-none absolute inset-0"
+            animate={{
+              opacity: [0.04, 0.1, 0.04],
+            }}
+            transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              background:
+                "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08), transparent 50%)",
+            }}
+          />
+          <motion.div
+            className="pointer-events-none absolute inset-0 opacity-[0.14]"
+            animate={{ backgroundPositionX: ["0%", "100%"] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            style={{
+              backgroundImage:
+                "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.14) 50%, transparent 100%)",
+              backgroundSize: "220% 100%",
+            }}
+          />
+          <motion.div
+            className="pointer-events-none absolute inset-0 opacity-[0.16]"
+            animate={{ opacity: [0.08, 0.18, 0.08] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(0deg, rgba(255,255,255,0.08) 0, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 36px)",
+            }}
+          />
           <div className="flex flex-col gap-7 justify-center">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-col gap-2">
               <div className="font-mono text-xs text-white/50 tracking-widest border border-white/15 px-3 py-1 w-fit uppercase">STATUS: SYSTEM ONLINE</div>
-              <div className="font-mono text-xs text-white/30 tracking-widest uppercase">&gt; FOR IT CONSULTANTS &amp; MSPS</div>
+              <TypewriterLine
+                text="> FOR IT CONSULTANTS & MSPS"
+                className="font-mono text-xs text-white/30 tracking-widest uppercase min-h-[16px]"
+              />
             </motion.div>
             <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
               className="text-5xl lg:text-6xl font-bold tracking-tight uppercase leading-[1.1]">
@@ -170,10 +247,43 @@ export default function Home() {
               { icon: <Calendar className="w-4 h-4" />, label: "BOOKED_MEETINGS", sub: "READY TO CLOSE", indent: "ml-8" },
             ] as SchematicNode[]).map((n, i) => (
               <motion.div key={n.label} whileHover={{ borderColor: "rgba(255,255,255,0.6)", backgroundColor: "rgba(255,255,255,0.05)" }}
-                transition={{ duration: 0.15 }}
+                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: i * 0.35 }}
+                animate={{
+                  y: [0, -2, 0],
+                  boxShadow: [
+                    "0 0 0 rgba(255,255,255,0)",
+                    "0 0 16px rgba(255,255,255,0.12)",
+                    "0 0 0 rgba(255,255,255,0)",
+                  ],
+                }}
                 className={`border border-white/15 bg-transparent p-4 flex items-center gap-3 relative cursor-default ${n.indent ?? ""}`}>
-                {i > 0 && <div className="absolute left-8 -top-5 w-[1px] h-5 bg-white/10" />}
-                {i < 2 && <div className="absolute left-8 -bottom-5 w-[1px] h-5 bg-white/10" />}
+                {i > 0 && (
+                  <div className="absolute left-8 -top-5 w-[1px] h-5 bg-white/10 overflow-hidden">
+                    <motion.div
+                      className="w-full h-3 bg-white/40"
+                      animate={{ y: ["-100%", "150%"] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: "linear", delay: i * 0.25 }}
+                    />
+                  </div>
+                )}
+                {i < 2 && (
+                  <div className="absolute left-8 -bottom-5 w-[1px] h-5 bg-white/10 overflow-hidden">
+                    <motion.div
+                      className="w-full h-3 bg-white/40"
+                      animate={{ y: ["-100%", "150%"] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: "linear", delay: (i + 1) * 0.2 }}
+                    />
+                  </div>
+                )}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  animate={{ x: ["-120%", "120%"] }}
+                  transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+                  style={{
+                    background:
+                      "linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%)",
+                  }}
+                />
                 <div className="w-9 h-9 border border-white/25 flex items-center justify-center text-white/60">{n.icon}</div>
                 <div>
                   <p className="font-bold text-sm uppercase">{n.label}</p>
@@ -182,11 +292,12 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
-        </section>
+          </motion.section>
+        </div>
 
         {/* ── 01 PROBLEM ── */}
         <Reveal>
-          <section className="w-full flex flex-col items-center text-center">
+          <section className="w-full -mt-10 md:-mt-12 flex flex-col items-center text-center">
             <SectionTag index="01" label="THE_PROBLEM" />
             <h2 className="text-4xl md:text-5xl font-bold uppercase leading-tight max-w-3xl mx-auto">
               Most IT firms rely on referrals<br />
