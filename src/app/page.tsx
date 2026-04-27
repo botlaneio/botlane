@@ -2,10 +2,12 @@
 
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight, Database, Mail, Calendar, X, CheckCircle2, TrendingUp, MessageSquare, Zap, Shield, Target, Users } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { TrackedLink } from "@/components/tracked-link";
+import { useInView } from "framer-motion";
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   return (
@@ -40,14 +42,10 @@ type SchematicNode = {
   indent?: string;
 };
 
-type MetricCard = {
-  icon: React.ReactNode;
-  label: string;
-  val: string;
-  highlight?: boolean;
-};
-
 export default function Home() {
+  const metricsRef = useRef<HTMLElement | null>(null);
+  const metricsInView = useInView(metricsRef, { once: true, margin: "-120px" });
+  const [pipelineStep, setPipelineStep] = useState(0);
   const cursorX = useMotionValue(-400);
   const cursorY = useMotionValue(-400);
   const springX = useSpring(cursorX, { stiffness: 80, damping: 20 });
@@ -58,6 +56,44 @@ export default function Home() {
     window.addEventListener("mousemove", handle);
     return () => window.removeEventListener("mousemove", handle);
   }, [cursorX, cursorY]);
+
+  useEffect(() => {
+    if (!metricsInView) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setPipelineStep((prev) => (prev < 3 ? prev + 1 : prev));
+    }, 1100);
+
+    return () => window.clearInterval(interval);
+  }, [metricsInView]);
+
+  const pipelineMetrics = [
+    {
+      icon: <Database className="w-3 h-3" />,
+      label: "LEADS_FOUND",
+      values: [320, 780, 1240, 1240],
+    },
+    {
+      icon: <Mail className="w-3 h-3" />,
+      label: "OUTREACH_SENT",
+      values: [0, 1900, 4500, 4500],
+    },
+    {
+      icon: <MessageSquare className="w-3 h-3" />,
+      label: "REPLIES",
+      values: [0, 0, 52, 84],
+    },
+    {
+      icon: <Calendar className="w-3 h-3" />,
+      label: "MEETINGS_BOOKED",
+      values: [0, 0, 0, 12],
+      highlight: true,
+    },
+  ];
+  const pipelineStages = ["Lead detected", "Message sent", "Reply received", "Meeting booked"];
+  const pipelineProgress = (pipelineStep / (pipelineStages.length - 1)) * 100;
 
   return (
     <main className="min-h-screen bg-black relative overflow-hidden flex flex-col font-sans text-white w-full">
@@ -80,7 +116,7 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="relative z-10 w-full max-w-[1300px] mx-auto px-8 lg:px-16 pt-12 pb-32 flex flex-col gap-32">
+      <div className="relative z-10 w-full max-w-[1300px] mx-auto px-8 lg:px-16 pt-14 pb-36 flex flex-col gap-40">
 
         <SiteHeader />
 
@@ -96,20 +132,31 @@ export default function Home() {
               Pipeline for IT firms<br />
               <span className="text-white/50">who hate selling.</span>
             </motion.h2>
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="flex flex-col gap-2">
-              <p className="max-w-lg font-mono text-sm text-white/50 leading-relaxed">
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="flex flex-col gap-3">
+              <p className="max-w-lg font-mono text-sm text-white/50 leading-loose">
                 &gt; We build AI-powered outbound systems that consistently book qualified meetings — so you can focus on closing.
               </p>
-              <p className="font-mono text-xs text-white/35 tracking-widest uppercase">[ 5–40 qualified meetings/month depending on plan ]</p>
+              <p className="font-mono text-xs text-white/35 tracking-widest uppercase">
+                5–40 qualified meetings/month depending on plan
+              </p>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.35 }} className="flex gap-4 mt-2">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.35 }} className="flex flex-wrap gap-4 mt-2">
               <TrackedLink
                 href="/book-call"
                 eventName="cta_click"
                 eventMeta={{ location: "home_hero", target: "/book-call" }}
                 className="px-7 py-3.5 border border-white/50 text-white font-mono text-sm tracking-widest uppercase flex items-center gap-3 group/b hover:bg-white hover:text-black transition-colors"
               >
-                Build_Pipeline <ArrowRight className="w-4 h-4 group-hover/b:translate-x-1 transition-transform" />
+                Book_Pipeline_Call
+                <ArrowRight className="w-4 h-4 group-hover/b:translate-x-1 transition-transform" />
+              </TrackedLink>
+              <TrackedLink
+                href="/how-it-works"
+                eventName="cta_click"
+                eventMeta={{ location: "home_hero", target: "/how-it-works" }}
+                className="px-7 py-3.5 border border-white/25 text-white/75 font-mono text-sm tracking-widest uppercase hover:text-white hover:border-white/55 transition-colors"
+              >
+                See How It Works
               </TrackedLink>
             </motion.div>
           </div>
@@ -156,7 +203,7 @@ export default function Home() {
                   className="border border-white/10 p-6 bg-white/[0.01] flex flex-col gap-4 cursor-default">
                   <div className="text-white/50">{c.icon}</div>
                   <h3 className="font-bold uppercase text-sm tracking-wide">{c.title}</h3>
-                  <p className="font-mono text-xs text-white/40 leading-relaxed">{c.body}</p>
+                  <p className="font-mono text-xs text-white/40 leading-loose">{c.body}</p>
                 </motion.div>
               ))}
             </div>
@@ -173,7 +220,7 @@ export default function Home() {
                   A turnkey outbound engine.<br />
                   <span className="text-white/40">Deployed in weeks.</span>
                 </h2>
-                <p className="font-mono text-sm text-white/45 leading-relaxed max-w-md">
+                <p className="font-mono text-sm text-white/45 leading-loose max-w-md">
                   Botlane replaces a full SDR team with an AI-native, multi-channel outbound system. We handle targeting, messaging, sending, and inbox management — you just take the calls.
                 </p>
               </div>
@@ -188,7 +235,7 @@ export default function Home() {
                     <span className="font-mono text-[10px] text-white/25 pt-1 flex-shrink-0">{s.step}</span>
                     <div>
                       <h3 className="font-bold uppercase text-sm mb-1">{s.label}</h3>
-                      <p className="font-mono text-xs text-white/40 leading-relaxed">{s.desc}</p>
+                      <p className="font-mono text-xs text-white/40 leading-loose">{s.desc}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -199,9 +246,9 @@ export default function Home() {
 
         {/* ── 03 AI DEMO ── */}
         <Reveal delay={0.05}>
-          <section id="metrics" className="w-full">
+          <section id="metrics" ref={metricsRef} className="w-full">
             <SectionTag index="03" label="SYSTEM_METRICS" />
-            <div className="border border-white/15 bg-white/[0.015] p-8">
+            <div className="border border-white/15 bg-white/[0.015] p-10">
               <div className="flex items-center justify-between border-b border-white/10 pb-5 mb-6">
                 <div className="flex items-center gap-4">
                   <div className="w-8 h-8 border border-white/25 flex items-center justify-center text-white/50">
@@ -214,18 +261,54 @@ export default function Home() {
                 </div>
                 <span className="hidden md:block font-mono text-[10px] border border-white/25 px-2 py-1 text-white/50">HEALTH: OPTIMAL</span>
               </div>
+              <div className="mb-7 border border-white/12 bg-black/30 p-4">
+                <div className="flex items-center justify-between gap-4 mb-4">
+                  <p className="font-mono text-[10px] text-white/45 tracking-widest uppercase">
+                    Live pipeline simulation
+                  </p>
+                  <span className="font-mono text-[10px] text-white/60 border border-white/20 px-2 py-1 uppercase tracking-widest">
+                    Stage {pipelineStep + 1}/{pipelineStages.length}
+                  </span>
+                </div>
+                <div className="relative h-[2px] bg-white/10 mb-4 overflow-hidden">
+                  <motion.div
+                    className="absolute left-0 top-0 h-full bg-white/60"
+                    animate={{ width: `${pipelineProgress}%` }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                  />
+                </div>
+                <div className="grid md:grid-cols-4 gap-2 font-mono text-[10px] tracking-widest uppercase">
+                  {pipelineStages.map((step, index) => (
+                    <motion.div
+                      key={step}
+                      animate={{
+                        opacity: pipelineStep >= index ? 1 : 0.45,
+                        borderColor:
+                          pipelineStep === index ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.15)",
+                      }}
+                      transition={{ duration: 0.35 }}
+                      className="px-2.5 py-2 border text-white/80"
+                    >
+                      {step}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {([
-                  { icon: <Database className="w-3 h-3" />, label: "LEADS_FOUND", val: "1,240" },
-                  { icon: <Mail className="w-3 h-3" />, label: "OUTREACH_SENT", val: "4,500" },
-                  { icon: <MessageSquare className="w-3 h-3" />, label: "REPLIES", val: "84" },
-                  { icon: <Calendar className="w-3 h-3" />, label: "MEETINGS_BOOKED", val: "12", highlight: true },
-                ] as MetricCard[]).map(c => (
+                {pipelineMetrics.map((c) => (
                   <motion.div key={c.label} whileHover={{ borderColor: "rgba(255,255,255,0.5)", backgroundColor: "rgba(255,255,255,0.04)" }}
                     transition={{ duration: 0.15 }}
                     className={`p-5 border flex flex-col gap-3 cursor-default ${c.highlight ? "border-white/40" : "border-white/12"}`}>
                     <div className="font-mono text-[10px] text-white/35 flex items-center gap-2">{c.icon}{c.label}</div>
-                    <div className={`font-mono font-bold ${c.highlight ? "text-4xl" : "text-2xl text-white/75"}`}>{c.val}</div>
+                    <motion.div
+                      key={`${c.label}-${pipelineStep}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className={`font-mono font-bold ${c.highlight ? "text-4xl" : "text-2xl text-white/75"}`}
+                    >
+                      {c.values[pipelineStep].toLocaleString()}
+                    </motion.div>
                   </motion.div>
                 ))}
               </div>
@@ -241,7 +324,7 @@ export default function Home() {
               <div className="border border-white/10 p-8 bg-white/[0.01] relative">
                 <span className="font-mono text-[10px] text-white/30 uppercase absolute -top-3 left-6 bg-black px-2 border border-white/10">EXCLUSIONS</span>
                 <ul className="flex flex-col gap-5">
-                  {["No paid ads or media buying", "No content creation or SEO", "No cold calling or manual dialing", "No CRM bloat or complex setups"].map(item => (
+                  {["No paid ads", "No content marketing", "No cold calling", "No CRM complexity"].map(item => (
                     <li key={item} className="flex items-center gap-3 font-mono text-sm text-white/40">
                       <X className="w-4 h-4 text-white/25 flex-shrink-0" />{item}
                     </li>
@@ -260,6 +343,9 @@ export default function Home() {
                 </ul>
               </motion.div>
             </div>
+            <p className="mt-7 text-center font-mono text-sm text-white/65">
+              Just qualified meetings on your calendar.
+            </p>
           </section>
         </Reveal>
 
@@ -302,7 +388,7 @@ export default function Home() {
                     eventMeta={{ location: "home_pricing_card", target: `/book-call_${t.tier}` }}
                     className="w-full py-3 border border-white/25 text-white/55 font-mono text-xs uppercase text-center hover:bg-white hover:text-black transition-colors"
                   >
-                    INITIALIZE_{t.tier}
+                    Initialize {t.tier} →
                   </TrackedLink>
                 </motion.div>
               ))}
@@ -321,7 +407,7 @@ export default function Home() {
                   We work best with<br />
                   <span className="text-white/40">specific types of firms.</span>
                 </h2>
-                <p className="font-mono text-sm text-white/40 leading-relaxed">
+                <p className="font-mono text-sm text-white/40 leading-loose">
                   Botlane is not for everyone. We work exclusively with IT services firms that have a defined offer, a clear target market, and the capacity to handle new clients.
                 </p>
               </div>
@@ -360,7 +446,7 @@ export default function Home() {
                   className="flex flex-col items-center gap-4 p-6 border border-transparent cursor-default">
                   <div className="text-white/40">{c.icon}</div>
                   <h3 className="font-bold uppercase text-sm tracking-wide">{c.title}</h3>
-                  <p className="font-mono text-xs text-white/35 leading-relaxed">{c.body}</p>
+                  <p className="font-mono text-xs text-white/35 leading-loose">{c.body}</p>
                 </motion.div>
               ))}
             </div>
@@ -369,12 +455,12 @@ export default function Home() {
 
         {/* ── 08 CTA ── */}
         <Reveal delay={0.05}>
-          <section id="contact" className="w-full flex flex-col items-center text-center py-16 border-t border-white/10">
+          <section id="contact" className="w-full flex flex-col items-center text-center py-20 border-t border-white/10">
             <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest border border-white/10 px-3 py-1 mb-10 bg-black">
               08 // INITIALIZE_SEQUENCE
             </span>
-            <h2 className="text-5xl md:text-6xl font-bold uppercase leading-tight max-w-2xl mx-auto mb-6">
-              Ready to stop relying on referrals?
+            <h2 className="text-5xl md:text-6xl font-bold uppercase leading-tight max-w-3xl mx-auto mb-6">
+              Get a predictable pipeline — without hiring SDRs.
             </h2>
             <p className="font-mono text-sm text-white/40 max-w-lg mb-10 leading-relaxed">
               Book a 20-minute strategy call. We&apos;ll show you exactly how the system works and whether it&apos;s right for your firm.
