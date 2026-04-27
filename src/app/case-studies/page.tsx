@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { TrackedLink } from "@/components/tracked-link";
 
 const studies = [
   {
@@ -8,18 +8,21 @@ const studies = [
     before: "Referral-heavy growth with no predictable outbound volume.",
     after: "Consistent monthly meetings with owner-level decision makers.",
     highlight: "From sporadic outreach to weekly qualified call flow.",
+    metrics: ["Reply quality improved within first 3 optimization cycles", "Meeting flow stabilized by month 2"],
   },
   {
     segment: "Cybersecurity Consulting",
     before: "Low reply quality despite broad cold email activity.",
     after: "Improved targeting and positioning increased qualified responses.",
     highlight: "Higher intent conversations from narrower ICP focus.",
+    metrics: ["Lower noise replies after ICP narrowing", "Higher conversion from reply to booked meeting"],
   },
   {
     segment: "Cloud Services Provider",
     before: "Outbound handled ad hoc with little campaign visibility.",
     after: "Structured reporting and optimization cycle tied to KPIs.",
     highlight: "Leadership gained pipeline clarity by channel and segment.",
+    metrics: ["Weekly reporting reduced decision lag", "Clear channel attribution for planning spend"],
   },
 ];
 
@@ -56,6 +59,11 @@ export default function CaseStudiesPage() {
                 <span className="text-white/70">After:</span> {study.after}
               </p>
               <p className="font-mono text-xs text-white/70">{study.highlight}</p>
+              <ul className="mt-3 flex flex-col gap-2 font-mono text-[11px] text-white/45">
+                {study.metrics.map((metric) => (
+                  <li key={metric}>&gt; {metric}</li>
+                ))}
+              </ul>
             </article>
           ))}
         </section>
@@ -68,12 +76,14 @@ export default function CaseStudiesPage() {
             We can walk you through similar account patterns and expected ramp
             behavior based on your service category.
           </p>
-          <Link
+          <TrackedLink
             href="/book-call"
+            eventName="cta_click"
+            eventMeta={{ location: "case_studies_final_cta", target: "/book-call" }}
             className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
           >
             Book a call
-          </Link>
+          </TrackedLink>
         </section>
 
         <SiteFooter />

@@ -1,12 +1,32 @@
 import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { TrackedLink } from "@/components/tracked-link";
 
 const checklist = [
   "Your main service offer and ideal client profile",
   "Current pipeline source mix (referrals, outbound, inbound)",
   "Monthly qualified meeting target",
   "Sales capacity and close process readiness",
+];
+
+const trustNotes = [
+  { label: "Typical first response", value: "< 1 business day" },
+  { label: "Average setup window", value: "14-21 days" },
+  { label: "Commercial model", value: "Month-to-month" },
+];
+
+const socialProof = [
+  {
+    quote:
+      "We moved from sporadic referrals to a predictable outbound rhythm we could finally plan around.",
+    role: "Founder, Managed IT Services Firm",
+  },
+  {
+    quote:
+      "The weekly reporting was clear enough to make decisions fast instead of guessing what to fix.",
+    role: "Revenue Lead, Cybersecurity Consultancy",
+  },
 ];
 
 export default function BookCallPage() {
@@ -29,10 +49,23 @@ export default function BookCallPage() {
           <p className="font-mono text-[10px] text-white/35 uppercase tracking-widest">
             Submit the form below for fastest response.
           </p>
+          <div className="mt-7 grid grid-cols-1 md:grid-cols-3 gap-3 text-left">
+            {trustNotes.map((item) => (
+              <div key={item.label} className="border border-white/10 p-3 bg-black/30">
+                <p className="font-mono text-[10px] text-white/35 uppercase tracking-widest mb-1">
+                  {item.label}
+                </p>
+                <p className="font-mono text-xs text-white/80">{item.value}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section>
           <h2 className="text-2xl font-bold uppercase mb-4">Request your call</h2>
+          <p className="font-mono text-xs text-white/45 mb-4">
+            We review every request manually. Share enough context so we can tailor the call to your pipeline stage.
+          </p>
           <LeadCaptureForm sourcePage="book-call" />
         </section>
 
@@ -56,6 +89,15 @@ export default function BookCallPage() {
           </article>
         </section>
 
+        <section className="grid lg:grid-cols-2 gap-6">
+          {socialProof.map((item) => (
+            <article key={item.role} className="border border-white/12 bg-white/[0.01] p-7">
+              <p className="font-mono text-sm text-white/75 leading-relaxed mb-4">&quot;{item.quote}&quot;</p>
+              <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">{item.role}</p>
+            </article>
+          ))}
+        </section>
+
         <section className="border border-white/12 bg-white/[0.01] p-7">
           <h2 className="text-xl font-bold uppercase mb-4">Direct contacts</h2>
           <p className="font-mono text-xs text-white/45 normal-case">
@@ -71,6 +113,14 @@ export default function BookCallPage() {
               help@botlane.io
             </a>
           </p>
+          <TrackedLink
+            href="/pricing"
+            eventName="cta_click"
+            eventMeta={{ location: "book_call_direct_contacts", target: "/pricing" }}
+            className="inline-flex mt-4 px-4 py-2 border border-white/30 text-white/75 text-[10px] font-mono uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+          >
+            Review plans before booking
+          </TrackedLink>
         </section>
 
         <SiteFooter />

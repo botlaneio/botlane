@@ -1,6 +1,6 @@
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import Link from "next/link";
+import { TrackedLink } from "@/components/tracked-link";
 
 const tiers = [
   {
@@ -97,6 +97,24 @@ const fitGuide = [
   },
 ];
 
+const objectionHandlers = [
+  {
+    objection: "What if we are unsure outbound will work for our niche?",
+    answer:
+      "We define ICP and messaging assumptions up front, then validate with measurable weekly signals before scaling volume.",
+  },
+  {
+    objection: "What if we cannot handle sudden lead volume?",
+    answer:
+      "Volume is controlled by plan and adjusted during reviews so pipeline growth matches your delivery and sales capacity.",
+  },
+  {
+    objection: "What if results are not tracking toward target?",
+    answer:
+      "We run a structured optimization loop each week with clear actions across targeting, copy, channel mix, and qualification flow.",
+  },
+];
+
 export default function PricingPage() {
   return (
     <main className="min-h-screen bg-black text-white">
@@ -156,12 +174,14 @@ export default function PricingPage() {
                     <li key={detail}>&gt; {detail}</li>
                   ))}
                 </ul>
-                <Link
+                <TrackedLink
                   href="/contact"
+                  eventName="cta_click"
+                  eventMeta={{ location: "pricing_plan_card", target: `/contact_${tier.tier}` }}
                   className="inline-flex px-4 py-2 border border-white/30 text-white/75 text-[10px] font-mono uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
                 >
                   Discuss {tier.tier} plan
-                </Link>
+                </TrackedLink>
               </article>
             ))}
           </div>
@@ -218,6 +238,20 @@ export default function PricingPage() {
           </article>
         </section>
 
+        <section className="border border-white/12 bg-white/[0.01] p-8">
+          <h2 className="text-2xl md:text-3xl font-bold uppercase mb-5">
+            Common concerns before starting
+          </h2>
+          <div className="grid gap-4">
+            {objectionHandlers.map((item) => (
+              <article key={item.objection} className="border border-white/10 p-5">
+                <p className="font-bold text-sm mb-2">{item.objection}</p>
+                <p className="font-mono text-xs text-white/45 leading-relaxed">{item.answer}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="border border-white/15 bg-white/[0.015] p-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold uppercase mb-3">
             Want to see if this fits your firm?
@@ -226,12 +260,14 @@ export default function PricingPage() {
             We walk through your current outbound, expected meeting targets, and
             recommended tier before you commit.
           </p>
-          <Link
+          <TrackedLink
             href="/contact"
+            eventName="cta_click"
+            eventMeta={{ location: "pricing_final_cta", target: "/contact" }}
             className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
           >
             Book a strategy call
-          </Link>
+          </TrackedLink>
         </section>
         <SiteFooter />
       </div>
