@@ -1,0 +1,114 @@
+import { NextRequest, NextResponse } from "next/server";
+
+type LeadPayload = {
+  name: string;
+  email: string;
+  company: string;
+  monthlyTarget: string;
+  message?: string;
+  website?: string;
+  sourcePage: "contact" | "book-call";
+};
+
+type RateBucket = {
+  count: number;
+  resetAt: number;
+};
+
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_REQUESTS_PER_WINDOW = 10;
+const rateBuckets = new Map<string, RateBucket>();
+
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0]?.trim() || "unknown";
+  }
+  return request.headers.get("x-real-ip") || "unknown";
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const bucket = rateBuckets.get(ip);
+
+  if (!bucket || now >= bucket.resetAt) {
+    rateBuckets.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+    return false;
+  }
+
+  bucket.count += 1;
+  return bucket.count > MAX_REQUESTS_PER_WINDOW;
+}
+
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateLead(payload: LeadPayload): string | null {
+  if (!payload.name || payload.name.trim().length < 2) {
+    return "Please provide a valid name.";
+  }
+  if (!payload.email || !isValidEmail(payload.email)) {
+    return "Please provide a valid work email.";
+  }
+  if (!payload.company || payload.company.trim().length < 2) {
+    return "Please provide a valid company name.";
+  }
+  if (!payload.monthlyTarget || payload.monthlyTarget.trim().length < 2) {
+    return "Please provide your monthly meeting target.";
+  }
+  if (!payload.sourcePage || !["contact", "book-call"].includes(payload.sourcePage)) {
+    return "Invalid lead source.";
+  }
+  return null;
+}
+
+export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again in a few minutes." },
+      { status: 429 },
+    );
+  }
+
+  let payload: LeadPayload;
+  try {
+    payload = (await request.json()) as LeadPayload;
+  } catch {
+    return NextResponse.json({ error: "Invalid request payload." }, { status: 400 });
+  }
+
+  if (payload.website?.trim()) {
+    return NextResponse.json({ ok: true }, { status: 200 });
+  }
+
+  const validationError = validateLead(payload);
+  if (validationError) {
+    return NextResponse.json({ error: validationError }, { status: 400 });
+  }
+
+  const webhookUrl = process.env.LEAD_WEBHOOK_URL;
+  if (webhookUrl) {
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...payload,
+        receivedAt: new Date().toISOString(),
+        ip,
+      }),
+      cache: "no-store",
+    });
+  } else {
+    console.info("Lead captured", {
+      ...payload,
+      receivedAt: new Date().toISOString(),
+      ip,
+    });
+  }
+
+  return NextResponse.json({ ok: true }, { status: 200 });
+}

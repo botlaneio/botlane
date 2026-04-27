@@ -27,6 +27,10 @@ App runs at [http://localhost:3000](http://localhost:3000).
 - `npm run lint` - run ESLint checks
 - `npm run typecheck` - run TypeScript checks
 
+## Environment Variables
+
+- `LEAD_WEBHOOK_URL` (optional) - receives form submissions from `/api/leads` as JSON payload.
+
 ## Project Structure
 
 - `src/app` - routes and page-level layout

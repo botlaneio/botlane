@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -131,6 +132,14 @@ export default function ContactPage() {
               Review plans before call
             </Link>
           </article>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold uppercase mb-4">Request your strategy call</h2>
+          <p className="font-mono text-xs text-white/45 mb-5">
+            Fill this out and we will respond with next steps and scheduling options.
+          </p>
+          <LeadCaptureForm sourcePage="contact" />
         </section>
         <SiteFooter />
       </div>

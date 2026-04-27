@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LeadCaptureForm } from "@/components/lead-capture-form";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -26,12 +26,14 @@ export default function BookCallPage() {
             We will review your current outbound situation, identify constraints,
             and recommend the right path to predictable meetings.
           </p>
-          <Link
-            href="mailto:admin@botlane.io?subject=Strategy%20Call%20Request"
-            className="inline-flex px-7 py-3 border border-white/50 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
-          >
-            Request call by email
-          </Link>
+          <p className="font-mono text-[10px] text-white/35 uppercase tracking-widest">
+            Submit the form below for fastest response.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold uppercase mb-4">Request your call</h2>
+          <LeadCaptureForm sourcePage="book-call" />
         </section>
 
         <section className="grid lg:grid-cols-2 gap-6">
