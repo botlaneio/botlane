@@ -31,7 +31,9 @@ App runs at [http://localhost:3000](http://localhost:3000).
 
 - `LEAD_WEBHOOK_URL` (optional) - receives form submissions from `/api/leads` as JSON payload.
 - `ANALYTICS_WEBHOOK_URL` (optional) - receives event payloads from `/api/events`.
-- `DATA_DIR` (optional) - folder for JSONL persistence (`leads.jsonl` and `events.jsonl`). Defaults to `.data`.
+- `STORAGE_PROVIDER` (optional) - storage adapter key. Current supported value: `file`.
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (optional) - Cloudflare Turnstile site key for client-side challenge.
+- `TURNSTILE_SECRET_KEY` (optional) - Cloudflare Turnstile secret key for server-side token verification.
 
 ## Project Structure
 

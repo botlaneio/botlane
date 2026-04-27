@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { persistEvent } from "@/lib/server/persistence";
+import { storageProvider } from "@/lib/server/storage";
 
 type EventPayload = {
   event: string;
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     receivedAt: new Date().toISOString(),
   };
 
-  await persistEvent(eventEnvelope);
+  await storageProvider.saveEvent(eventEnvelope);
 
   if (webhookUrl) {
     await fetch(webhookUrl, {

@@ -25,16 +25,67 @@ const initialState: FormState = {
   website: "",
 };
 
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: string | HTMLElement,
+        options: {
+          sitekey: string;
+          callback: (token: string) => void;
+          "expired-callback"?: () => void;
+        },
+      ) => string;
+    };
+  }
+}
+
 export function LeadCaptureForm({ sourcePage }: LeadCaptureFormProps) {
   const startedAtRef = useRef<number>(0);
+  const widgetRenderedRef = useRef(false);
   const [form, setForm] = useState<FormState>(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   useEffect(() => {
     startedAtRef.current = Date.now();
   }, []);
+
+  useEffect(() => {
+    if (!turnstileSiteKey || widgetRenderedRef.current) {
+      return;
+    }
+
+    const containerId = `turnstile-${sourcePage}`;
+    const renderWidget = () => {
+      if (!window.turnstile) {
+        return;
+      }
+      window.turnstile.render(`#${containerId}`, {
+        sitekey: turnstileSiteKey,
+        callback: (token) => setTurnstileToken(token),
+        "expired-callback": () => setTurnstileToken(""),
+      });
+      widgetRenderedRef.current = true;
+    };
+
+    const existingScript = document.getElementById("turnstile-script");
+    if (existingScript) {
+      renderWidget();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "turnstile-script";
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    script.async = true;
+    script.defer = true;
+    script.onload = renderWidget;
+    document.head.appendChild(script);
+  }, [sourcePage, turnstileSiteKey]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -57,6 +108,7 @@ export function LeadCaptureForm({ sourcePage }: LeadCaptureFormProps) {
           message: form.message,
           website: form.website,
           elapsedMs: Date.now() - startedAtRef.current,
+          turnstileToken,
           sourcePage,
         }),
       });
@@ -158,9 +210,16 @@ export function LeadCaptureForm({ sourcePage }: LeadCaptureFormProps) {
         aria-hidden="true"
       />
 
+      {turnstileSiteKey && (
+        <div
+          id={`turnstile-${sourcePage}`}
+          className="min-h-[65px] border border-white/10 p-3 bg-black/20"
+        />
+      )}
+
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || (Boolean(turnstileSiteKey) && !turnstileToken)}
         className="w-full md:w-auto px-7 py-3 border border-white/45 text-white font-mono text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {isSubmitting ? "Submitting..." : "Request strategy call"}

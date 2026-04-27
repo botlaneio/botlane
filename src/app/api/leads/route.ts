@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { persistLead } from "@/lib/server/persistence";
+import { storageProvider } from "@/lib/server/storage";
 
 type LeadPayload = {
   name: string;
@@ -9,6 +9,7 @@ type LeadPayload = {
   message?: string;
   website?: string;
   elapsedMs?: number;
+  turnstileToken?: string;
   sourcePage: "contact" | "book-call";
 };
 
@@ -68,6 +69,38 @@ function validateLead(payload: LeadPayload): string | null {
   return null;
 }
 
+async function verifyTurnstileToken(token: string | undefined, ip: string): Promise<boolean> {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) {
+    return true;
+  }
+  if (!token) {
+    return false;
+  }
+
+  const body = new URLSearchParams({
+    secret,
+    response: token,
+    remoteip: ip,
+  });
+
+  const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body,
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+  const data = (await response.json()) as { success?: boolean };
+  return Boolean(data.success);
+}
+
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
   if (isRateLimited(ip)) {
@@ -93,6 +126,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
+  const captchaValid = await verifyTurnstileToken(payload.turnstileToken, ip);
+  if (!captchaValid) {
+    return NextResponse.json(
+      { error: "Captcha verification failed. Please retry." },
+      { status: 400 },
+    );
+  }
+
   const leadId = `lead_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
   const receivedAt = new Date().toISOString();
   const leadEnvelope = {
@@ -103,7 +144,7 @@ export async function POST(request: NextRequest) {
     ip,
   };
 
-  await persistLead(leadEnvelope);
+  await storageProvider.saveLead(leadEnvelope);
 
   const webhookUrl = process.env.LEAD_WEBHOOK_URL;
   if (webhookUrl) {
