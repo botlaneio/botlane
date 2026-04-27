@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ArrowRight, Database, Mail, Calendar, X, CheckCircle2, Zap, Shield, Target, Users } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { PipelineAdvisor } from "@/components/pipeline-advisor";
 import { PipelineSimulator } from "@/components/pipeline-simulator";
 import { TrackedLink } from "@/components/tracked-link";
 
@@ -507,6 +508,7 @@ export default function Home() {
 
         <SiteFooter />
       </div>
+      <PipelineAdvisor />
     </main>
   );
 }

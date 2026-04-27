@@ -1,0 +1,264 @@
+BOTLANE LIGHT - PROJECT CONTEXT FILE
+Last updated: 2026-04-27
+
+========================================================================
+1) WHAT THIS PROJECT IS
+========================================================================
+
+Botlane Light is a conversion-focused marketing website for a B2B offer:
+"Pipeline as a Service" for IT firms (MSPs, consultants, related service teams).
+
+It is not a generic blog site or app dashboard. It is a high-intent
+marketing + lead-capture website designed to:
+
+- Explain the offer clearly
+- Build trust with structured content
+- Collect leads / book calls
+- Demonstrate value through interactive simulation
+
+Primary business objective:
+Turn qualified website visitors into booked strategy/demo calls.
+
+
+========================================================================
+2) CORE STACK
+========================================================================
+
+- Framework: Next.js 16 (App Router)
+- UI runtime: React 19
+- Language: TypeScript
+- Styling: Tailwind CSS 4
+- Motion: Framer Motion
+- Icons: lucide-react
+- Linting: ESLint
+- Type checks: tsc --noEmit
+
+Scripts (from package.json):
+- npm run dev
+- npm run build
+- npm run start
+- npm run lint
+- npm run typecheck
+
+
+========================================================================
+3) ROUTE MAP (APP ROUTER)
+========================================================================
+
+Main marketing routes:
+- /
+- /how-it-works
+- /metrics
+- /pricing
+- /contact
+- /book-call
+- /about
+- /case-studies
+- /faq
+- /privacy
+- /terms
+
+Technical/SEO routes:
+- /robots.txt (via src/app/robots.ts)
+- /sitemap.xml (via src/app/sitemap.ts)
+
+API routes:
+- /api/leads
+- /api/events
+
+
+========================================================================
+4) MAJOR PRODUCT CAPABILITIES
+========================================================================
+
+A) Site-wide marketing foundation
+- Structured pages with consistent dark visual language
+- Shared header/footer/navigation
+- Conversion CTAs with glow treatment
+- Tracked links for event instrumentation
+
+B) Lead capture + anti-spam
+- Lead form submits to /api/leads
+- Honeypot/timing checks
+- Optional Cloudflare Turnstile support
+- Optional webhook forwarding (LEAD_WEBHOOK_URL)
+
+C) Analytics tracking
+- Client-side event utility sends event payloads to /api/events
+- /api/events stores + can forward to webhook (ANALYTICS_WEBHOOK_URL)
+- Event schema includes path and metadata for UX telemetry
+
+D) Persistence abstraction
+- Storage provider pattern exists (current file-based provider)
+- JSONL persisted under .data (ignored by git)
+- Designed to be swappable later (database provider can be added)
+
+E) Interactive Pipeline Simulator (homepage)
+- This is the highest-complexity UI module in current codebase
+- Built as a split-screen, reactive experience (not just static cards)
+- Uses reducer-based state and derived metrics
+- Includes per-step control flow, live panel updates, processing overlay,
+  and a results modal with CTA actions
+
+
+========================================================================
+5) HOMEPAGE + PIPELINE SIMULATOR DESIGN INTENT
+========================================================================
+
+The homepage combines:
+- Hero narrative + CTAs
+- Problem/solution/trust sections
+- Pricing snapshot and qualification framing
+- Embedded simulator to create "system already working for me" feeling
+
+Simulator intent:
+- Let visitor configure key variables (offer/location/ICP/tone/channels/etc.)
+- Show live effect in right panel
+- Build perceived sophistication before CTA
+- End in modal with forecast + booking actions
+
+Key simulator implementation notes:
+- File: src/components/pipeline-simulator.tsx
+- State model uses useReducer (centralized over scattered useState)
+- Derived values drive metrics and projection outputs
+- URL query syncing supports shareable configuration state
+- Browser-only APIs are guarded to avoid SSR runtime crashes
+  (window/navigator checks were added after a production runtime bug)
+
+
+========================================================================
+6) CURRENT UX DECISIONS (IMPORTANT FOR FUTURE EDITS)
+========================================================================
+
+- The module has undergone many micro-iterations for visual stability.
+- Layout currently biases practical readability over aggressive animation.
+- "Activity feed" was removed due to excessive motion/noise.
+- Trust checkpoints moved to the left panel.
+- Right panel internal scrollbar was removed intentionally.
+- Results display opens in modal after processing overlay.
+- There is explicit sensitivity around:
+  1) vertical jumpiness
+  2) over-animation
+  3) dead space in split layout
+  4) CTA clarity
+
+When editing simulator, preserve:
+- smoothness
+- legibility
+- conversion clarity
+- low-friction interaction
+
+
+========================================================================
+7) DATA FLOW (SIMPLIFIED)
+========================================================================
+
+Client interaction -> component state updates -> derived metrics recomputed ->
+UI updates (live module + metric cards + confidence/rationale) ->
+processing animation -> results modal -> CTA click tracking.
+
+Lead/event server flow:
+Browser -> /api/leads or /api/events -> storage provider save -> optional webhook.
+
+
+========================================================================
+8) FILES THAT MATTER MOST
+========================================================================
+
+Primary:
+- src/app/page.tsx
+- src/components/pipeline-simulator.tsx
+
+Shared layout/navigation:
+- src/app/layout.tsx
+- src/components/site-header.tsx
+- src/components/site-footer.tsx
+- src/components/page-transition.tsx
+
+Tracking + links:
+- src/lib/track-event.ts
+- src/components/tracked-link.tsx
+
+Lead + events APIs:
+- src/app/api/leads/route.ts
+- src/app/api/events/route.ts
+
+Storage abstraction:
+- src/lib/server/storage/types.ts
+- src/lib/server/storage/file-storage.ts
+- src/lib/server/storage/index.ts
+
+Form capture:
+- src/components/lead-capture-form.tsx
+
+
+========================================================================
+9) ENVIRONMENT VARIABLES
+========================================================================
+
+- LEAD_WEBHOOK_URL (optional)
+- ANALYTICS_WEBHOOK_URL (optional)
+- STORAGE_PROVIDER (optional; "file" currently supported)
+- NEXT_PUBLIC_TURNSTILE_SITE_KEY (optional)
+- TURNSTILE_SECRET_KEY (optional)
+
+
+========================================================================
+10) OPERATIONAL / WORKFLOW NOTES
+========================================================================
+
+- CI exists (.github/workflows/ci.yml) and checks typecheck/lint/build.
+- Quality gate command order generally used:
+  1) npm run typecheck
+  2) npm run lint
+  3) npm run build
+
+PowerShell note:
+- Command chaining with "&&" is not portable in this environment.
+- Use PowerShell-safe sequencing and LASTEXITCODE checks.
+
+Known non-error terminal noise:
+- Next dev server request lines with query params are expected
+  (especially due to simulator share URL syncing).
+
+
+========================================================================
+11) MAINTENANCE GUIDELINES FOR FUTURE AGENTS/DEVS
+========================================================================
+
+- Treat the simulator as a product feature, not a decorative widget.
+- Do not reintroduce heavy, constant motion without user validation.
+- Keep SSR safety in mind any time using window/document/navigator.
+- Prefer incremental UX changes with lint/typecheck after each pass.
+- Preserve dark visual identity and typographic consistency.
+- Keep CTAs prominent and outcome-oriented.
+
+
+========================================================================
+12) A FEW "IRRELEVANT BUT HELPFUL" DETAILS
+========================================================================
+
+- This project has had many rounds of copy tweaks for trust language.
+- Tiny spacing changes have had outsized UX impact.
+- "Looks subtle but premium" is preferred over "flashy."
+- The project is currently in a highly iterative polish phase.
+- If something feels off, it is usually hierarchy/spacing/motion, not logic.
+
+
+========================================================================
+13) QUICK ONBOARDING CHECKLIST (NEW PERSON / NEW AGENT)
+========================================================================
+
+1. Read README.md
+2. Open src/app/page.tsx
+3. Open src/components/pipeline-simulator.tsx
+4. Run npm run typecheck && npm run lint (PowerShell-safe equivalent)
+5. Start dev server and inspect:
+   - hero CTA row
+   - simulator step transitions
+   - processing overlay
+   - results modal + CTA behavior
+6. Verify no window/navigator usage occurs unguarded during render paths.
+
+
+END OF FILE

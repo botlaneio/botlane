@@ -1,0 +1,143 @@
+BOTLANE LIGHT - GO LIVE CHECKLIST
+Version: 1.0
+Date: 2026-04-27
+
+Use this checklist in order. Mark each item when complete.
+
+====================================================================
+P0 - BLOCKERS (MUST PASS BEFORE LAUNCH)
+====================================================================
+
+[ ] 1. Legal Pages Final
+    Owner: You (+ Legal)
+    - [ ] `Privacy` page finalized with real legal copy
+    - [ ] `Terms` page finalized with real legal copy
+    - [ ] Company legal name/contact details verified
+
+[ ] 2. Production Domain + SSL
+    Owner: You
+    - [ ] Production DNS points correctly
+    - [ ] HTTPS certificate active/valid
+    - [ ] Canonical domain chosen and consistent
+
+[ ] 3. Production Environment Variables
+    Owner: You
+    - [ ] `LEAD_WEBHOOK_URL` set (if used)
+    - [ ] `ANALYTICS_WEBHOOK_URL` set (if used)
+    - [ ] `STORAGE_PROVIDER` verified
+    - [ ] `NEXT_PUBLIC_TURNSTILE_SITE_KEY` set (if used)
+    - [ ] `TURNSTILE_SECRET_KEY` set (if used)
+
+[ ] 4. Lead Pipeline Verified
+    Owner: You + Me
+    - [ ] Test lead from `/contact` received in target system
+    - [ ] Test lead from `/book-call` received in target system
+    - [ ] Failure mode tested (webhook down / timeout)
+    - [ ] Response SLA owner assigned (primary + backup)
+
+[ ] 5. Anti-Spam + Abuse Protection
+    Owner: You + Me
+    - [ ] Turnstile verification works in production
+    - [ ] Honeypot/timing checks still allow legit submissions
+    - [ ] Rate-limiting behavior validated for `/api/leads`
+    - [ ] Rate-limiting behavior validated for `/api/events`
+
+[ ] 6. Release Build Gate
+    Owner: Me
+    - [ ] `npm run typecheck` passes
+    - [ ] `npm run lint` passes
+    - [ ] `npm run build` passes
+
+
+====================================================================
+P1 - HIGH VALUE (RECOMMENDED FOR LAUNCH)
+====================================================================
+
+[ ] 7. Analytics Funnel Working
+    Owner: You + Me
+    - [ ] Confirm analytics source of truth (GA/PostHog/etc.)
+    - [ ] CTA clicks tracked
+    - [ ] Form attempts/success/errors tracked
+    - [ ] Simulator/result CTA events visible
+    - [ ] Basic conversion dashboard exists
+
+[ ] 8. SEO Readiness
+    Owner: Me
+    - [ ] Meta title/description reviewed for key pages
+    - [ ] Open Graph preview verified
+    - [ ] `robots.txt` correct
+    - [ ] `sitemap.xml` accessible and up-to-date
+    - [ ] Sitemap submitted to Search Console
+
+[ ] 9. Content + Trust Proof
+    Owner: You (+ Me for placement)
+    - [ ] Final pricing text approved
+    - [ ] Final guarantees/constraints approved
+    - [ ] Testimonials/logos/case metrics verified and approved
+    - [ ] Contact data consistent across pages/footer
+
+[ ] 10. UX + Cross-Browser QA
+    Owner: Me + You
+    - [ ] Chrome desktop pass
+    - [ ] Edge desktop pass
+    - [ ] Safari/macOS pass (if applicable)
+    - [ ] Mobile viewport pass (small + medium devices)
+    - [ ] Keyboard/focus flow pass
+    - [ ] No blocking console/runtime errors in prod
+
+
+====================================================================
+P2 - POST-LAUNCH (WEEK 1-2 IMPROVEMENTS)
+====================================================================
+
+[ ] 11. Conversion Optimization Queue
+    Owner: Me
+    - [ ] Hero/CTA copy variant tests
+    - [ ] Simulator interaction friction review
+    - [ ] Results modal CTA conversion review
+
+[ ] 12. Operational Reporting
+    Owner: You + Me
+    - [ ] Weekly KPI summary doc/dashboard
+    - [ ] Visitor -> Lead -> Booked call reporting cadence
+
+[ ] 13. Persistence Scalability Review
+    Owner: Me
+    - [ ] Evaluate move from file-based storage to database provider
+    - [ ] Define threshold for migration trigger
+
+
+====================================================================
+LAUNCH-DAY EXECUTION RUNBOOK
+====================================================================
+
+[ ] Freeze:
+    - [ ] No new feature merges
+    - [ ] Only blocker fixes allowed
+
+[ ] Deploy:
+    - [ ] Deploy tagged release to production
+    - [ ] Smoke test all key routes
+
+[ ] Smoke test (production):
+    - [ ] Homepage renders correctly
+    - [ ] Pipeline Simulator flow works
+    - [ ] Pipeline Advisor panel works
+    - [ ] Contact + Book-call forms submit successfully
+    - [ ] CTA links route correctly
+
+[ ] Monitoring window (first 24-72h):
+    - [ ] Check 4xx/5xx logs
+    - [ ] Check lead delivery logs
+    - [ ] Check analytics event ingestion
+    - [ ] Check page speed/core UX complaints
+
+
+====================================================================
+SIGN-OFF
+====================================================================
+
+Business Owner Sign-off: ______________________  Date: ___________
+Technical Sign-off: ___________________________  Date: ___________
+Launch Approved By: ___________________________  Date: ___________
+
