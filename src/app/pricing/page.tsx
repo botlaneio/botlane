@@ -67,6 +67,36 @@ const faqs = [
   },
 ];
 
+const fitGuide = [
+  {
+    tier: "LAUNCH",
+    idealFor: "Founder-led teams starting outbound for the first time.",
+    checks: [
+      "Need initial pipeline consistency",
+      "Prefer lower monthly commitment",
+      "Single-channel testing is enough for now",
+    ],
+  },
+  {
+    tier: "GROWTH",
+    idealFor: "Service firms that need predictable meetings every month.",
+    checks: [
+      "Ready for email + LinkedIn together",
+      "Need stronger qualification support",
+      "Want the best cost-to-volume balance",
+    ],
+  },
+  {
+    tier: "SCALE",
+    idealFor: "Teams with sales capacity that can absorb higher lead flow.",
+    checks: [
+      "Need multi-channel volume at speed",
+      "Require deeper strategic support",
+      "Optimizing for aggressive pipeline goals",
+    ],
+  },
+];
+
 export default function PricingPage() {
   return (
     <main className="min-h-screen bg-black text-white">
@@ -132,6 +162,33 @@ export default function PricingPage() {
                 >
                   Discuss {tier.tier} plan
                 </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="border border-white/12 bg-white/[0.01] p-8">
+          <h2 className="text-2xl md:text-3xl font-bold uppercase mb-3">
+            Which plan is right for you?
+          </h2>
+          <p className="font-mono text-xs text-white/45 mb-6">
+            Use this quick fit guide to shortlist the most practical tier
+            before booking your strategy call.
+          </p>
+          <div className="grid md:grid-cols-3 gap-5">
+            {fitGuide.map((item) => (
+              <article key={item.tier} className="border border-white/10 p-5">
+                <p className="font-mono text-[10px] text-white/35 uppercase tracking-widest mb-2">
+                  {item.tier}
+                </p>
+                <p className="font-mono text-xs text-white/50 leading-relaxed mb-4">
+                  {item.idealFor}
+                </p>
+                <ul className="flex flex-col gap-2 font-mono text-xs text-white/45">
+                  {item.checks.map((check) => (
+                    <li key={check}>&gt; {check}</li>
+                  ))}
+                </ul>
               </article>
             ))}
           </div>

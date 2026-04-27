@@ -2,6 +2,34 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
+const nextSteps = [
+  {
+    step: "01",
+    title: "Qualification review",
+    detail:
+      "We review your offer, ICP, and current outbound baseline before the call.",
+  },
+  {
+    step: "02",
+    title: "Strategy walkthrough",
+    detail:
+      "You get a channel mix recommendation, target volumes, and realistic meeting range.",
+  },
+  {
+    step: "03",
+    title: "Execution plan",
+    detail:
+      "If there is fit, we align on timeline, reporting cadence, and launch requirements.",
+  },
+];
+
+const callPrep = [
+  "Current offer(s) and average deal size",
+  "Ideal client profile and geographies",
+  "Past outbound channels and results",
+  "Monthly meeting target and sales capacity",
+];
+
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-black text-white">
@@ -63,6 +91,43 @@ export default function ContactPage() {
               </a>
             </div>
           </div>
+        </section>
+
+        <section className="grid lg:grid-cols-2 gap-6">
+          <article className="border border-white/12 bg-white/[0.01] p-7">
+            <h2 className="text-2xl font-bold uppercase mb-5">What happens after you contact us</h2>
+            <div className="space-y-4">
+              {nextSteps.map((item) => (
+                <div key={item.step} className="border border-white/10 p-4">
+                  <p className="font-mono text-[10px] text-white/35 uppercase tracking-widest mb-2">
+                    Step {item.step}
+                  </p>
+                  <p className="font-bold text-sm mb-1">{item.title}</p>
+                  <p className="font-mono text-xs text-white/45 leading-relaxed">
+                    {item.detail}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="border border-white/12 bg-white/[0.01] p-7">
+            <h2 className="text-2xl font-bold uppercase mb-5">Prepare for a useful call</h2>
+            <p className="font-mono text-xs text-white/45 leading-relaxed mb-4">
+              Bring these details to make the session practical and tailored to your team:
+            </p>
+            <ul className="flex flex-col gap-3 font-mono text-xs text-white/45 mb-6">
+              {callPrep.map((item) => (
+                <li key={item}>&gt; {item}</li>
+              ))}
+            </ul>
+            <Link
+              href="/pricing"
+              className="inline-flex px-5 py-2 border border-white/35 text-white/75 text-[10px] font-mono uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            >
+              Review plans before call
+            </Link>
+          </article>
         </section>
         <SiteFooter />
       </div>
