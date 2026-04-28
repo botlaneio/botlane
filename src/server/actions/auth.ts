@@ -42,6 +42,10 @@ export const signInAction = async (
   return {};
 };
 
+export const signInWithGoogleAction = async (): Promise<void> => {
+  await signIn("google", { redirectTo: "/dashboard" });
+};
+
 export const signUpAction = async (
   _state: AuthActionState,
   formData: FormData,
