@@ -51,6 +51,22 @@ function isValidEvent(payload: EventPayload): boolean {
   return true;
 }
 
+export async function GET() {
+  const [{ auth }, { getEventsForUser }] = await Promise.all([
+    import("@/auth"),
+    import("@/lib/data/events"),
+  ]);
+  const session = await auth();
+
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const events = await getEventsForUser(session.user.id);
+
+  return NextResponse.json({ events });
+}
+
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
   if (isRateLimited(ip)) {

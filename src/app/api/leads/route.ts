@@ -47,6 +47,22 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+export async function GET() {
+  const [{ auth }, { getLeadsForUser }] = await Promise.all([
+    import("@/auth"),
+    import("@/lib/data/leads"),
+  ]);
+  const session = await auth();
+
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const leads = await getLeadsForUser(session.user.id);
+
+  return NextResponse.json({ leads });
+}
+
 function validateLead(payload: LeadPayload): string | null {
   if (!payload.name || payload.name.trim().length < 2) {
     return "Please provide a valid name.";
