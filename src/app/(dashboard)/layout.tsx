@@ -13,7 +13,9 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <div className="flex">
+      <div className="pointer-events-none fixed inset-4 z-0 border border-white/8" />
+      <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_top_right,rgba(129,140,248,0.14),transparent_38%)]" />
+      <div className="relative z-10 flex">
         <Sidebar />
         <div className="min-w-0 flex-1">
           <Topbar session={session} />

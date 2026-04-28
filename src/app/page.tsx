@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { useEffect } from "react";
 import { useState } from "react";
 import { ArrowRight, Database, Mail, Calendar, X, CheckCircle2, Zap, Shield, Target, Users } from "lucide-react";
@@ -39,20 +39,31 @@ function SectionTag({ index, label }: { index: string; label: string }) {
 function TypewriterLine({
   text,
   speedMs = 38,
+  startDelayMs = 0,
   className,
 }: {
   text: string;
   speedMs?: number;
+  startDelayMs?: number;
   className?: string;
 }) {
   const [visibleCount, setVisibleCount] = useState(0);
   const [showCaret, setShowCaret] = useState(true);
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
-      setVisibleCount((prev) => (prev < text.length ? prev + 1 : prev));
-    }, speedMs);
-    return () => window.clearInterval(interval);
+    let interval: number | undefined;
+    const timeout = window.setTimeout(() => {
+      interval = window.setInterval(() => {
+        setVisibleCount((prev) => (prev < text.length ? prev + 1 : prev));
+      }, speedMs);
+    }, startDelayMs);
+
+    return () => {
+      window.clearTimeout(timeout);
+      if (interval) {
+        window.clearInterval(interval);
+      }
+    };
   }, [text, speedMs]);
 
   useEffect(() => {
@@ -82,6 +93,7 @@ export default function Home() {
   const cursorY = useMotionValue(-400);
   const springX = useSpring(cursorX, { stiffness: 240, damping: 30, mass: 0.25 });
   const springY = useSpring(cursorY, { stiffness: 240, damping: 30, mass: 0.25 });
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     let rafId = 0;
@@ -147,6 +159,51 @@ export default function Home() {
           }}
           transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
         >
+          <motion.svg
+            className="pointer-events-none absolute inset-0 z-[2] h-full w-full"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: prefersReducedMotion ? 0 : [0, 0.7, 0.42, 0.62, 0] }}
+            transition={{
+              duration: prefersReducedMotion ? 0 : 3.35,
+              ease: "easeInOut",
+              delay: prefersReducedMotion ? 0 : 0.2,
+            }}
+          >
+            <defs>
+              <linearGradient id="heroEdgeGlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="rgba(129,140,248,0)" />
+                <stop offset="45%" stopColor="rgba(129,140,248,0.88)" />
+                <stop offset="55%" stopColor="rgba(167,139,250,0.96)" />
+                <stop offset="100%" stopColor="rgba(129,140,248,0)" />
+              </linearGradient>
+            </defs>
+            <motion.rect
+              x="0.5"
+              y="0.5"
+              width="99"
+              height="99"
+              fill="none"
+              stroke="url(#heroEdgeGlowGradient)"
+              strokeWidth="0.85"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              initial={{ strokeDasharray: "16 318", strokeDashoffset: 338 }}
+              animate={
+                prefersReducedMotion
+                  ? { strokeDashoffset: 340 }
+                  : { strokeDashoffset: [338, 0, 338, 0] }
+              }
+              transition={{
+                duration: prefersReducedMotion ? 0 : 3.2,
+                ease: "easeOut",
+                delay: prefersReducedMotion ? 0 : 0.2,
+              }}
+            />
+          </motion.svg>
+
           <motion.div
             className="pointer-events-none absolute inset-0"
             animate={{
@@ -177,9 +234,35 @@ export default function Home() {
                 "repeating-linear-gradient(0deg, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 1px, transparent 1px, transparent 36px)",
             }}
           />
+          <motion.div
+            className="pointer-events-none absolute -top-16 right-[12%] h-52 w-52 rounded-full blur-3xl"
+            animate={{
+              opacity: [0.1, 0.2, 0.12],
+              x: [0, 7, 0],
+              y: [0, -5, 0],
+              scale: [1, 1.03, 1],
+            }}
+            transition={{ duration: 7.2, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              background:
+                "radial-gradient(circle, rgba(129,140,248,0.55) 0%, rgba(129,140,248,0) 72%)",
+            }}
+          />
           <div className="flex flex-col gap-7 justify-center">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-col gap-2">
-              <div className="font-mono text-xs text-white/50 tracking-widest border border-white/15 px-3 py-1 w-fit uppercase">STATUS: SYSTEM ONLINE</div>
+              <motion.div
+                className="font-mono text-xs text-white/50 tracking-widest border border-emerald-400/70 px-3 py-1 w-fit uppercase"
+                animate={{
+                  borderColor: [
+                    "rgba(74,222,128,0.66)",
+                    "rgba(74,222,128,0.9)",
+                    "rgba(74,222,128,0.66)",
+                  ],
+                }}
+                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                STATUS: SYSTEM ONLINE
+              </motion.div>
               <TypewriterLine
                 text="> FOR IT CONSULTANTS & MSPS"
                 className="font-mono text-xs text-white/30 tracking-widest uppercase min-h-[16px]"
@@ -188,15 +271,26 @@ export default function Home() {
             <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
               className="text-5xl lg:text-6xl font-bold tracking-tight uppercase leading-[1.1]">
               Pipeline for IT firms<br />
-              <span className="text-white/50">who hate selling.</span>
+              <motion.span
+                className="text-white/50 inline-block"
+                animate={{ opacity: [0.5, 0.66, 0.5] }}
+                transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                who hate selling.
+              </motion.span>
             </motion.h2>
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="flex flex-col gap-3">
-              <p className="max-w-lg font-mono text-sm text-white/50 leading-loose">
-                &gt; We build AI-powered outbound systems that consistently book qualified meetings — so you can focus on closing.
-              </p>
-              <p className="font-mono text-xs text-white/35 tracking-widest uppercase">
-                5–40 qualified meetings/month depending on plan
-              </p>
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="flex flex-col gap-3 min-h-[110px] md:min-h-[86px]">
+              <TypewriterLine
+                text="> We build AI-powered outbound systems that consistently book qualified meetings — so you can focus on closing."
+                speedMs={32}
+                className="max-w-lg font-mono text-sm text-white/50 leading-loose"
+              />
+              <TypewriterLine
+                text="5–40 qualified meetings/month depending on plan"
+                speedMs={42}
+                startDelayMs={3600}
+                className="font-mono text-xs text-white/35 tracking-widest uppercase"
+              />
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.35 }} className="flex flex-wrap gap-4 mt-2">
               <TrackedLink
@@ -207,14 +301,6 @@ export default function Home() {
               >
                 Book_Pipeline_Call
                 <ArrowRight className="w-4 h-4 group-hover/b:translate-x-1 transition-transform" />
-              </TrackedLink>
-              <TrackedLink
-                href="/how-it-works"
-                eventName="cta_click"
-                eventMeta={{ location: "home_hero", target: "/how-it-works" }}
-                className="px-7 py-3.5 border border-white/25 text-white/75 font-mono text-sm tracking-widest uppercase cta-glow"
-              >
-                See How It Works
               </TrackedLink>
               <TrackedLink
                 href="#pipeline-experience"

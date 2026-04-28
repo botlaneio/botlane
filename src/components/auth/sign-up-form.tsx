@@ -14,11 +14,16 @@ export function SignUpForm() {
   const [state, formAction, isPending] = useActionState(signUpAction, initialState);
 
   return (
-    <Card className="w-full max-w-md p-6">
+    <Card className="w-full max-w-md border-white/15 bg-white/[0.03] p-7">
       <form action={formAction} className="grid gap-5">
-        <div className="grid gap-1">
-          <h1 className="text-2xl font-semibold text-white">Create account</h1>
-          <p className="text-sm text-zinc-400">Start your Botlane client dashboard.</p>
+        <div className="grid gap-2">
+          <span className="w-fit border border-emerald-400/65 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-emerald-300">
+            Provision Node // Auth
+          </span>
+          <h1 className="text-2xl font-semibold uppercase tracking-wide text-white">Create account</h1>
+          <p className="font-mono text-xs uppercase tracking-widest text-zinc-400">
+            Start your Botlane client dashboard.
+          </p>
         </div>
         <Input autoComplete="name" label="Name" name="name" required type="text" />
         <Input autoComplete="email" label="Email" name="email" required type="email" />
@@ -31,7 +36,7 @@ export function SignUpForm() {
           type="password"
         />
         {state.error ? <p className="text-sm text-red-300">{state.error}</p> : null}
-        <Button disabled={isPending} type="submit">
+        <Button className="w-full" disabled={isPending} type="submit">
           {isPending ? "Creating account..." : "Create account"}
         </Button>
       </form>

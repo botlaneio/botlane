@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
@@ -15,7 +16,9 @@ const NAV_ITEMS = [
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const { status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isAuthenticated = status === "authenticated";
 
   const closeMobileMenu = () => setMobileOpen(false);
 
@@ -25,7 +28,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="w-10 h-10 border border-white/40 flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors"
+            className="w-10 h-10 border border-white/40 flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors accent-interactive"
             aria-label="Go to home"
             onClick={closeMobileMenu}
           >
@@ -51,7 +54,7 @@ export function SiteHeader() {
               aria-current={pathname === item.href ? "page" : undefined}
               className={
                 pathname === item.href
-                  ? "text-white border-b border-white/60 pb-1 transition-colors"
+                  ? "text-white border-b border-indigo-300/70 pb-1 shadow-[0_6px_16px_rgba(129,140,248,0.2)] transition-colors"
                   : "hover:text-white transition-colors"
               }
             >
@@ -60,18 +63,49 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <TrackedLink
-          href="/book-call"
-          eventName="cta_click"
-          eventMeta={{ location: "header_desktop", target: "/book-call" }}
-          className="hidden md:inline-flex px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs cta-glow"
-        >
-          Initialize
-        </TrackedLink>
+        <div className="hidden md:flex items-center gap-2">
+          {isAuthenticated ? (
+            <TrackedLink
+              href="/dashboard"
+              eventName="nav_click"
+              eventMeta={{ location: "header_desktop", target: "/dashboard" }}
+              className="inline-flex px-4 py-2 border border-emerald-400/65 text-emerald-300 uppercase font-mono text-xs accent-interactive"
+            >
+              Dashboard
+            </TrackedLink>
+          ) : (
+            <>
+              <TrackedLink
+                href="/sign-in"
+                eventName="nav_click"
+                eventMeta={{ location: "header_desktop", target: "/sign-in" }}
+                className="inline-flex px-4 py-2 border border-white/25 text-white/75 uppercase font-mono text-xs accent-interactive"
+              >
+                Sign in
+              </TrackedLink>
+              <TrackedLink
+                href="/sign-up"
+                eventName="nav_click"
+                eventMeta={{ location: "header_desktop", target: "/sign-up" }}
+                className="inline-flex px-4 py-2 border border-indigo-300/60 text-white uppercase font-mono text-xs cta-glow"
+              >
+                Sign up
+              </TrackedLink>
+              <TrackedLink
+                href="/book-call"
+                eventName="cta_click"
+                eventMeta={{ location: "header_desktop", target: "/book-call" }}
+                className="inline-flex px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs cta-glow"
+              >
+                Initialize
+              </TrackedLink>
+            </>
+          )}
+        </div>
 
         <button
           type="button"
-          className="md:hidden w-10 h-10 border border-white/40 flex items-center justify-center text-white/80 hover:text-white hover:border-white/60 transition-colors"
+          className="md:hidden w-10 h-10 border border-white/40 flex items-center justify-center text-white/80 hover:text-white hover:border-white/60 transition-colors accent-interactive"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((prev) => !prev)}
@@ -93,7 +127,7 @@ export function SiteHeader() {
                 onClick={closeMobileMenu}
                 className={
                   pathname === item.href
-                    ? "text-white border border-white/35 px-3 py-2"
+                    ? "text-white border border-indigo-300/55 bg-indigo-400/10 px-3 py-2"
                     : "hover:text-white border border-transparent px-3 py-2 transition-colors"
                 }
               >
@@ -101,15 +135,51 @@ export function SiteHeader() {
               </TrackedLink>
             ))}
           </div>
-          <TrackedLink
-            href="/book-call"
-            eventName="cta_click"
-            eventMeta={{ location: "header_mobile", target: "/book-call" }}
-            onClick={closeMobileMenu}
-            className="mt-4 w-full px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs cta-glow"
-          >
-            Initialize
-          </TrackedLink>
+          <div className="mt-4 grid gap-2">
+            {isAuthenticated ? (
+              <TrackedLink
+                href="/dashboard"
+                eventName="nav_click"
+                eventMeta={{ location: "header_mobile", target: "/dashboard" }}
+                onClick={closeMobileMenu}
+                className="w-full px-4 py-2 border border-emerald-400/65 text-emerald-300 uppercase font-mono text-xs text-center accent-interactive"
+              >
+                Dashboard
+              </TrackedLink>
+            ) : (
+              <>
+                <TrackedLink
+                  href="/sign-in"
+                  eventName="nav_click"
+                  eventMeta={{ location: "header_mobile", target: "/sign-in" }}
+                  onClick={closeMobileMenu}
+                  className="w-full px-4 py-2 border border-white/30 text-white/75 uppercase font-mono text-xs text-center accent-interactive"
+                >
+                  Sign in
+                </TrackedLink>
+                <TrackedLink
+                  href="/sign-up"
+                  eventName="nav_click"
+                  eventMeta={{ location: "header_mobile", target: "/sign-up" }}
+                  onClick={closeMobileMenu}
+                  className="w-full px-4 py-2 border border-indigo-300/60 text-white uppercase font-mono text-xs text-center cta-glow"
+                >
+                  Sign up
+                </TrackedLink>
+              </>
+            )}
+          </div>
+          {!isAuthenticated ? (
+            <TrackedLink
+              href="/book-call"
+              eventName="cta_click"
+              eventMeta={{ location: "header_mobile", target: "/book-call" }}
+              onClick={closeMobileMenu}
+              className="mt-4 w-full px-4 py-2 border border-white/40 text-white/70 uppercase font-mono text-xs cta-glow"
+            >
+              Initialize
+            </TrackedLink>
+          ) : null}
         </nav>
       )}
     </header>

@@ -6,6 +6,8 @@
   --foreground: #ffffff;
   --brand: #ffffff;
   --accent: #ffffff;
+  --accent-rgb: 129, 140, 248;
+  --accent-violet-rgb: 167, 139, 250;
   --muted: #a3a3a3;
   --line: rgba(255, 255, 255, 0.3);
 }
@@ -27,6 +29,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   overflow-x: hidden;
+  position: relative;
 }
 
 html {
@@ -54,4 +57,73 @@ html {
     0 0 0 1px rgba(167, 139, 250, 0.28),
     0 0 30px rgba(99, 102, 241, 0.44),
     0 0 60px rgba(76, 29, 149, 0.26);
+}
+
+.cta-glow:focus-visible {
+  outline: none;
+  border-color: rgba(var(--accent-violet-rgb), 0.8);
+  box-shadow:
+    0 0 0 2px rgba(var(--accent-rgb), 0.28),
+    0 0 0 5px rgba(var(--accent-violet-rgb), 0.16);
+}
+
+.accent-interactive {
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: 180ms;
+  transition-timing-function: ease;
+}
+
+.accent-interactive:hover {
+  border-color: rgba(var(--accent-violet-rgb), 0.5);
+  background-color: rgba(var(--accent-rgb), 0.08);
+  box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.16);
+}
+
+.accent-interactive:focus-visible {
+  outline: none;
+  border-color: rgba(var(--accent-violet-rgb), 0.8);
+  box-shadow:
+    0 0 0 2px rgba(var(--accent-rgb), 0.26),
+    0 0 0 5px rgba(var(--accent-violet-rgb), 0.12);
+}
+
+.accent-card {
+  transition-property: border-color, background-color, box-shadow;
+  transition-duration: 180ms;
+  transition-timing-function: ease;
+}
+
+.accent-card:hover {
+  border-color: rgba(var(--accent-violet-rgb), 0.28);
+  background-color: rgba(var(--accent-rgb), 0.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--accent-rgb), 0.14),
+    0 12px 36px rgba(0, 0, 0, 0.55),
+    0 0 36px rgba(var(--accent-rgb), 0.08);
+}
+
+body::before,
+body::after {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  z-index: -1;
+  border-radius: 9999px;
+  filter: blur(90px);
+}
+
+body::before {
+  width: min(42vw, 560px);
+  height: min(42vw, 560px);
+  top: -180px;
+  right: -120px;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.2) 0%, rgba(var(--accent-rgb), 0) 72%);
+}
+
+body::after {
+  width: min(36vw, 460px);
+  height: min(36vw, 460px);
+  bottom: -200px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(var(--accent-violet-rgb), 0.16) 0%, rgba(var(--accent-violet-rgb), 0) 74%);
 }
