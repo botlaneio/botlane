@@ -9,6 +9,11 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/botlane_ci
+      DIRECT_URL: postgresql://ci:ci@localhost:5432/botlane_ci
+      AUTH_SECRET: ci-auth-secret
+      AUTH_URL: http://localhost:3000
 
     steps:
       - name: Checkout
