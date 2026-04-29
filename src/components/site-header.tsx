@@ -46,7 +46,7 @@ export function SiteHeader() {
   const closeMobileMenu = () => setMobileOpen(false);
   return (
     <header className="w-full border-b border-white/15 pb-4">
-      <div className="flex justify-between items-end gap-4 md:grid md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-end md:gap-8">
+      <div className="flex justify-between items-start gap-3 sm:gap-4 md:grid md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-end md:gap-8">
         <div className="flex items-center gap-4">
           <Link
             href="/"
@@ -57,10 +57,10 @@ export function SiteHeader() {
             <span className="font-mono text-xs">BT</span>
           </Link>
           <div>
-            <Link href="/" className="text-2xl font-bold tracking-widest uppercase">
+            <Link href="/" className="text-lg sm:text-2xl font-bold tracking-widest uppercase">
               BOTLANE.IO
             </Link>
-            <p className="font-mono text-xs text-white/40 tracking-widest">
+            <p className="hidden sm:block font-mono text-xs text-white/40 tracking-widest">
               PIPELINE-AS-A-SERVICE // v1.0.0
             </p>
           </div>

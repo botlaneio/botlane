@@ -137,19 +137,19 @@ export default function Home() {
       />
 
       {/* Frame Border */}
-      <div className="fixed inset-4 border border-white/10 z-0 pointer-events-none">
+      <div className="fixed inset-2 sm:inset-4 border border-white/10 z-0 pointer-events-none">
         {["-top-1 -left-1 border-t-2 border-l-2", "-top-1 -right-1 border-t-2 border-r-2", "-bottom-1 -left-1 border-b-2 border-l-2", "-bottom-1 -right-1 border-b-2 border-r-2"].map((cls, i) => (
           <div key={i} className={`absolute w-3 h-3 border-white/50 ${cls}`} />
         ))}
       </div>
 
-      <div className="relative z-10 w-full max-w-[1300px] mx-auto px-8 lg:px-16 pt-14 pb-36 flex flex-col gap-28">
+      <div className="relative z-10 w-full max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-16 pt-10 sm:pt-14 pb-24 sm:pb-36 flex flex-col gap-20 sm:gap-28">
         <div className="flex flex-col gap-4">
           <SiteHeader />
 
           {/* ── HERO ── */}
           <motion.section
-            className="w-full grid lg:grid-cols-[1fr_280px] gap-8 border border-white/15 bg-white/[0.015] p-10 relative overflow-hidden"
+            className="w-full grid lg:grid-cols-[1fr_280px] gap-6 sm:gap-8 border border-white/15 bg-white/[0.015] p-5 sm:p-8 md:p-10 relative overflow-hidden"
           animate={{
             boxShadow: [
               "inset 0 0 0 1px rgba(255,255,255,0.02)",
@@ -269,7 +269,7 @@ export default function Home() {
               />
             </motion.div>
             <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-5xl lg:text-6xl font-bold tracking-tight uppercase leading-[1.1]">
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight uppercase leading-[1.1]">
               Pipeline for IT firms<br />
               <motion.span
                 className="text-white/50 inline-block"
@@ -279,7 +279,7 @@ export default function Home() {
                 who hate selling.
               </motion.span>
             </motion.h2>
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="flex flex-col gap-3 min-h-[110px] md:min-h-[86px]">
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="flex flex-col gap-3 min-h-[136px] sm:min-h-[110px] md:min-h-[86px]">
               <TypewriterLine
                 text="> We build AI-powered outbound systems that consistently book qualified meetings — so you can focus on closing."
                 speedMs={32}
@@ -292,12 +292,12 @@ export default function Home() {
                 className="font-mono text-xs text-white/35 tracking-widest uppercase"
               />
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.35 }} className="flex flex-wrap gap-4 mt-2">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.35 }} className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mt-2">
               <TrackedLink
                 href="/book-call"
                 eventName="cta_click"
                 eventMeta={{ location: "home_hero", target: "/book-call" }}
-                className="px-7 py-3.5 border border-white/50 text-white font-mono text-sm tracking-widest uppercase flex items-center gap-3 group/b cta-glow"
+                className="w-full sm:w-auto px-7 py-3.5 border border-white/50 text-white font-mono text-sm tracking-widest uppercase flex items-center justify-center gap-3 group/b cta-glow"
               >
                 Book_Pipeline_Call
                 <ArrowRight className="w-4 h-4 group-hover/b:translate-x-1 transition-transform" />
@@ -306,7 +306,7 @@ export default function Home() {
                 href="#pipeline-experience"
                 eventName="cta_click"
                 eventMeta={{ location: "home_hero", target: "#pipeline-experience" }}
-                className="px-7 py-3.5 border border-white/30 text-white/80 font-mono text-sm tracking-widest uppercase cta-glow"
+                className="w-full sm:w-auto px-7 py-3.5 border border-white/30 text-white/80 font-mono text-sm tracking-widest uppercase text-center cta-glow"
               >
                 Run Live Demo →
               </TrackedLink>
@@ -367,20 +367,20 @@ export default function Home() {
 
         {/* ── 01 PROBLEM ── */}
         <Reveal>
-          <section className="w-full -mt-10 md:-mt-12 flex flex-col items-center text-center">
+          <section className="w-full -mt-6 sm:-mt-10 md:-mt-12 flex flex-col items-center text-center">
             <SectionTag index="01" label="THE_PROBLEM" />
-            <h2 className="text-4xl md:text-5xl font-bold uppercase leading-tight max-w-3xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase leading-tight max-w-3xl mx-auto">
               Most IT firms rely on referrals<br />
               <span className="text-white/35">— until they dry up.</span>
             </h2>
-            <div className="mt-12 grid md:grid-cols-3 gap-6 w-full text-left">
+            <div className="mt-10 sm:mt-12 grid md:grid-cols-3 gap-4 sm:gap-6 w-full text-left">
               {[
                 { icon: <Zap className="w-5 h-5" />, title: "Referrals are unpredictable", body: "You can't forecast next month's revenue when it depends on who someone bumped into at a conference." },
                 { icon: <Users className="w-5 h-5" />, title: "Hiring SDRs is slow & expensive", body: "A single SDR costs $80–100k/year, takes 6 months to ramp, and still may not produce consistent results." },
                 { icon: <Target className="w-5 h-5" />, title: "You need a system, not a person", body: "Outbound at scale requires infrastructure, data, and automation — not headcount." },
               ].map(c => (
                 <div key={c.title}
-                  className="border border-white/10 p-6 bg-white/[0.01] flex flex-col gap-4 cursor-default hover:border-white/50 hover:bg-white/[0.03] transition-colors">
+                  className="border border-white/10 p-5 sm:p-6 bg-white/[0.01] flex flex-col gap-4 cursor-default hover:border-white/50 hover:bg-white/[0.03] transition-colors">
                   <div className="text-white/50">{c.icon}</div>
                   <h3 className="font-bold uppercase text-sm tracking-wide">{c.title}</h3>
                   <p className="font-mono text-xs text-white/40 leading-loose">{c.body}</p>
@@ -394,9 +394,9 @@ export default function Home() {
         <Reveal delay={0.05}>
           <section className="w-full">
             <SectionTag index="02" label="THE_SOLUTION" />
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
               <div className="flex flex-col gap-6">
-                <h2 className="text-4xl font-bold uppercase leading-tight">
+                <h2 className="text-3xl sm:text-4xl font-bold uppercase leading-tight">
                   A turnkey outbound engine.<br />
                   <span className="text-white/40">Deployed in weeks.</span>
                 </h2>
@@ -436,8 +436,8 @@ export default function Home() {
         <Reveal delay={0.05}>
           <section className="w-full">
             <SectionTag index="04" label="WHAT_WE_DO_NOT_DO" />
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="border border-white/10 p-8 bg-white/[0.01] relative">
+            <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+              <div className="border border-white/10 p-6 sm:p-8 bg-white/[0.01] relative">
                 <span className="font-mono text-[10px] text-white/30 uppercase absolute -top-3 left-6 bg-black px-2 border border-white/10">EXCLUSIONS</span>
                 <ul className="flex flex-col gap-5">
                   {["No paid ads", "No content marketing", "No cold calling", "No CRM complexity"].map(item => (
@@ -448,7 +448,7 @@ export default function Home() {
                 </ul>
               </div>
               <div
-                className="border border-white/35 p-8 bg-white/[0.02] relative cursor-default hover:border-white/60 transition-colors">
+                className="border border-white/35 p-6 sm:p-8 bg-white/[0.02] relative cursor-default hover:border-white/60 transition-colors">
                 <span className="font-mono text-[10px] text-white/50 uppercase absolute -top-3 left-6 bg-black px-2 border border-white/35">INCLUSIONS</span>
                 <ul className="flex flex-col gap-5">
                   {["Targeted B2B Lead Sourcing", "Multi-channel Outreach (Email + LinkedIn)", "AI-Powered Personalisation at Scale", "Inbox Management & Meeting Booking"].map(item => (
@@ -469,14 +469,14 @@ export default function Home() {
         <Reveal delay={0.05}>
           <section id="pricing" className="w-full">
             <SectionTag index="05" label="SPECIFICATIONS_AND_TIERS" />
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-5 sm:gap-6">
               {[
                 { tier: "LAUNCH", price: "$1,500", specs: ["500 contacts/mo", "Cold email only", "2 sending domains"], target: "5–10 CALLS/MO", featured: false },
                 { tier: "GROWTH", price: "$2,500", specs: ["1,000 contacts/mo", "Email + LinkedIn", "4 sending domains"], target: "12–20 CALLS/MO", featured: true },
                 { tier: "SCALE", price: "$5,000", specs: ["2,000+ contacts/mo", "Multi-channel dominance", "Dedicated support"], target: "25–40 CALLS/MO", featured: false },
               ].map(t => (
                 <div key={t.tier}
-                  className={`border p-7 flex flex-col relative cursor-default hover:border-white/70 hover:bg-white/[0.04] transition-colors ${t.featured ? "border-white/50 bg-white/[0.025]" : "border-white/12 bg-white/[0.01]"}`}>
+                  className={`border p-5 sm:p-7 flex flex-col relative cursor-default hover:border-white/70 hover:bg-white/[0.04] transition-colors ${t.featured ? "border-white/50 bg-white/[0.025]" : "border-white/12 bg-white/[0.01]"}`}>
                   {t.featured && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[10px] bg-black border border-white/35 px-3 py-1 uppercase whitespace-nowrap">
                       RECOMMENDED
@@ -516,9 +516,9 @@ export default function Home() {
         <Reveal delay={0.05}>
           <section className="w-full">
             <SectionTag index="06" label="IDEAL_CLIENT_PROFILE" />
-            <div className="grid md:grid-cols-2 gap-12 items-start">
+            <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-start">
               <div>
-                <h2 className="text-3xl font-bold uppercase leading-tight mb-6">
+                <h2 className="text-2xl sm:text-3xl font-bold uppercase leading-tight mb-6">
                   We work best with<br />
                   <span className="text-white/40">specific types of firms.</span>
                 </h2>
@@ -549,7 +549,7 @@ export default function Home() {
 
         {/* ── 07 TRANSPARENCY ── */}
         <Reveal delay={0.05}>
-          <section className="w-full border border-white/10 bg-white/[0.01] p-10">
+          <section className="w-full border border-white/10 bg-white/[0.01] p-6 sm:p-10">
             <SectionTag index="07" label="TRANSPARENCY" />
             <div className="grid md:grid-cols-3 gap-8 text-center">
               {[
@@ -570,11 +570,11 @@ export default function Home() {
 
         {/* ── 08 CTA ── */}
         <Reveal delay={0.05}>
-          <section id="contact" className="w-full flex flex-col items-center text-center py-20 border-t border-white/10">
+          <section id="contact" className="w-full flex flex-col items-center text-center py-14 sm:py-20 border-t border-white/10">
             <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest border border-white/10 px-3 py-1 mb-10 bg-black">
               08 // INITIALIZE_SEQUENCE
             </span>
-            <h2 className="text-5xl md:text-6xl font-bold uppercase leading-tight max-w-3xl mx-auto mb-6">
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold uppercase leading-tight max-w-3xl mx-auto mb-6">
               Get a predictable pipeline — without hiring SDRs.
             </h2>
             <p className="font-mono text-sm text-white/40 max-w-lg mb-10 leading-relaxed">
@@ -584,7 +584,7 @@ export default function Home() {
               href="/book-call"
               eventName="cta_click"
               eventMeta={{ location: "home_final_cta", target: "/book-call" }}
-              className="px-10 py-5 border border-white/50 text-white font-mono text-sm tracking-widest uppercase flex items-center gap-3 group/c mx-auto cta-glow"
+              className="w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-5 border border-white/50 text-white font-mono text-sm tracking-widest uppercase flex items-center justify-center gap-3 group/c mx-auto cta-glow"
             >
               Book a Strategy Call
               <ArrowRight className="w-5 h-5 group-hover/c:translate-x-1 transition-transform" />

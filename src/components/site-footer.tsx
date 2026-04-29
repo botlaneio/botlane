@@ -35,7 +35,7 @@ const FOOTER_LINK_GROUPS = [
 
 export function SiteFooter() {
   return (
-    <footer className="w-full border-t border-white/10 pt-10 mt-6">
+    <footer className="w-full border-t border-white/10 pt-8 sm:pt-10 mt-6">
       <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
         <div className="space-y-4">
           <p className="font-mono text-[10px] text-white/45 uppercase tracking-widest">
@@ -101,11 +101,11 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="mt-10 pt-5 border-t border-white/8 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div className="mt-8 sm:mt-10 pt-5 border-t border-white/8 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <span className="font-mono text-[10px] text-white/25 uppercase tracking-widest">
           BOTLANE.IO // END_OF_DOCUMENT
         </span>
-        <div className="flex items-center gap-4 font-mono text-[10px] text-white/30 uppercase tracking-widest">
+        <div className="flex flex-wrap items-center gap-4 font-mono text-[10px] text-white/30 uppercase tracking-widest">
           <Link href="/privacy" className="hover:text-white/65 transition-colors">
             Privacy
           </Link>

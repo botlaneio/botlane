@@ -75,7 +75,7 @@ export function PipelineAdvisor() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed right-6 bottom-6 z-[85] px-4 py-3 border border-white/35 bg-black/85 text-white font-mono text-xs uppercase tracking-widest cta-glow"
+        className="fixed right-3 bottom-3 sm:right-6 sm:bottom-6 z-[85] px-4 py-3 border border-white/35 bg-black/85 text-white font-mono text-xs uppercase tracking-widest cta-glow"
       >
         Estimate Pipeline →
       </button>
@@ -92,7 +92,7 @@ export function PipelineAdvisor() {
             />
 
             <motion.aside
-              className="fixed right-0 top-0 bottom-0 z-[87] w-full max-w-[410px] border-l border-white/15 bg-black p-5 md:p-6 overflow-y-auto"
+              className="fixed right-0 top-0 bottom-0 z-[87] w-full max-w-[410px] border-l border-white/15 bg-black p-4 sm:p-5 md:p-6 overflow-y-auto"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
